@@ -1,0 +1,34 @@
+[
+  {
+    "schemaVersion": 1,
+    "id": "mode.conversation",
+    "titleKey": "mode.conversation.title",
+    "summaryKey": "mode.conversation.summary",
+    "icon": "conversation",
+    "recommended": true
+  },
+  {
+    "schemaVersion": 1,
+    "id": "mode.workplace",
+    "titleKey": "mode.workplace.title",
+    "summaryKey": "mode.workplace.summary",
+    "icon": "workplace",
+    "recommended": false
+  },
+  {
+    "schemaVersion": 1,
+    "id": "mode.it-support",
+    "titleKey": "mode.itSupport.title",
+    "summaryKey": "mode.itSupport.summary",
+    "icon": "support",
+    "recommended": false
+  },
+  {
+    "schemaVersion": 1,
+    "id": "mode.software-interview",
+    "titleKey": "mode.softwareInterview.title",
+    "summaryKey": "mode.softwareInterview.summary",
+    "icon": "interview",
+    "recommended": false
+  }
+]

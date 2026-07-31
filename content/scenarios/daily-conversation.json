@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "scenario.daily.coffee-shop",
+  "modeId": "mode.conversation",
+  "status": "published",
+  "difficulty": ["a2", "b1"],
+  "durationMinutes": 6,
+  "titleKey": "scenario.daily.coffeeShop.title",
+  "summaryKey": "scenario.daily.coffeeShop.summary",
+  "objectiveKey": "scenario.daily.coffeeShop.objective",
+  "roles": { "learner": "customer", "tutor": "barista" },
+  "promptTemplateId": "prompt.roleplay.daily.v1",
+  "tags": ["daily", "confidence"]
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "scenario.workplace.daily-standup",
+  "modeId": "mode.workplace",
+  "status": "published",
+  "difficulty": ["b1", "b2"],
+  "durationMinutes": 8,
+  "titleKey": "scenario.workplace.dailyStandup.title",
+  "summaryKey": "scenario.workplace.dailyStandup.summary",
+  "objectiveKey": "scenario.workplace.dailyStandup.objective",
+  "roles": { "learner": "team-member", "tutor": "facilitator" },
+  "promptTemplateId": "prompt.roleplay.workplace.v1",
+  "tags": ["workplace", "meetings"]
+}

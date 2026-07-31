@@ -1,0 +1,37 @@
+name: Propuesta de función
+description: Proponer un resultado alineado con el roadmap secuencial
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema de usuario
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Fase probable
+      options:
+        - Phase 1
+        - Phase 2
+        - Phase 3
+        - Phase 4
+        - Phase 5
+        - Phase 6
+        - Phase 7
+        - Phase 8
+        - Por determinar
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Resultado y criterios de aceptación
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Privacidad, accesibilidad y riesgos

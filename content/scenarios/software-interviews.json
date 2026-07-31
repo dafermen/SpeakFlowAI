@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "scenario.interview.backend-role",
+  "modeId": "mode.software-interview",
+  "status": "published",
+  "difficulty": ["b2", "c1"],
+  "durationMinutes": 12,
+  "titleKey": "scenario.interview.backendRole.title",
+  "summaryKey": "scenario.interview.backendRole.summary",
+  "objectiveKey": "scenario.interview.backendRole.objective",
+  "roles": { "learner": "candidate", "tutor": "interviewer" },
+  "promptTemplateId": "prompt.roleplay.interview.v1",
+  "tags": ["interview", "software"]
+}

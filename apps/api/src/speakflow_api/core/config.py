@@ -1,0 +1,58 @@
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass, field
+from pathlib import Path
+
+
+def _repository_root() -> Path:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / "pnpm-workspace.yaml").exists():
+            return parent
+    return Path.cwd()
+
+
+def _bounded_int(name: str, default: int, minimum: int, maximum: int) -> int:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    try:
+        value = int(raw)
+    except ValueError:
+        return default
+    return min(maximum, max(minimum, value))
+
+
+@dataclass(frozen=True, slots=True)
+class Settings:
+    environment: str
+    data_dir: Path
+    database_url: str
+    openai_api_key: str | None = field(default=None, repr=False)
+    realtime_model: str = "gpt-realtime-2.1-mini"
+    realtime_max_output_tokens: int = 350
+    realtime_session_limit_minutes: int = 15
+
+
+def load_settings() -> Settings:
+    data_dir = Path(os.getenv("SPEAKFLOW_DATA_DIR", _repository_root() / "data")).resolve()
+    database_url = os.getenv(
+        "SPEAKFLOW_DATABASE_URL",
+        f"sqlite:///{(data_dir / 'speakflowai-dev.db').as_posix()}",
+    )
+    return Settings(
+        environment=os.getenv("SPEAKFLOW_ENV", "development"),
+        data_dir=data_dir,
+        database_url=database_url,
+        openai_api_key=os.getenv("OPENAI_API_KEY") or None,
+        realtime_model=os.getenv(
+            "SPEAKFLOW_REALTIME_MODEL",
+            "gpt-realtime-2.1-mini",
+        ),
+        realtime_max_output_tokens=_bounded_int(
+            "SPEAKFLOW_REALTIME_MAX_OUTPUT_TOKENS", 350, 50, 2_000
+        ),
+        realtime_session_limit_minutes=_bounded_int(
+            "SPEAKFLOW_REALTIME_SESSION_LIMIT_MINUTES", 15, 1, 15
+        ),
+    )

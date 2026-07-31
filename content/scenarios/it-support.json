@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "scenario.it-support.printer-offline",
+  "modeId": "mode.it-support",
+  "status": "published",
+  "difficulty": ["b1", "b2"],
+  "durationMinutes": 10,
+  "titleKey": "scenario.itSupport.printerOffline.title",
+  "summaryKey": "scenario.itSupport.printerOffline.summary",
+  "objectiveKey": "scenario.itSupport.printerOffline.objective",
+  "roles": { "learner": "support-specialist", "tutor": "employee" },
+  "promptTemplateId": "prompt.roleplay.it-support.v1",
+  "tags": ["it-support", "troubleshooting"]
+}

@@ -1,0 +1,34 @@
+name: Reporte de error
+description: Informar un comportamiento reproducible sin incluir datos sensibles
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: No incluyas secretos, audio, transcripciones, datos personales ni información de empleadores.
+  - type: textarea
+    id: description
+    attributes:
+      label: Qué ocurrió
+      description: Describe el comportamiento observado y el esperado.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos mínimos
+      description: Usa datos sintéticos.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Entorno
+      description: Versión, navegador y sistema sin identificadores privados.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Seguridad
+      options:
+        - label: Confirmo que eliminé secretos y datos sensibles.
+          required: true

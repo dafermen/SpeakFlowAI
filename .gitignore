@@ -1,0 +1,50 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Runtime data
+data/*
+!data/.gitkeep
+!data/README.md
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.pytest-tmp/
+.pytest_tmp/
+.mypy_cache/
+.ruff_cache/
+.venv/
+
+# Node
+node_modules/
+*.tsbuildinfo
+dist/
+.sites/
+coverage/
+.vitepress/cache/
+.vitepress/dist/
+
+# Tests and logs
+.coverage
+htmlcov/
+playwright-report/
+test-results/
+*.log
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

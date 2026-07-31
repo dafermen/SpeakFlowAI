@@ -1,0 +1,49 @@
+{
+  "name": "@speakflow/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b && vite build",
+    "build:sites": "pnpm build && node scripts/build-sites.mjs",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "check:native": "node scripts/check-native.mjs",
+    "dev": "vite",
+    "format": "prettier --check .",
+    "lint": "eslint .",
+    "mobile:sync": "pnpm build && cap sync",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "dependencies": {
+    "@capacitor/app": "8.1.1",
+    "@capacitor/core": "8.4.2",
+    "@speakflow/api-client": "workspace:*",
+    "@speakflow/configuration": "workspace:*",
+    "@speakflow/content-schemas": "workspace:*",
+    "@speakflow/design-system": "workspace:*",
+    "lucide-react": "^1.28.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@capacitor/android": "8.4.2",
+    "@capacitor/cli": "8.4.2",
+    "@capacitor/ios": "8.4.2",
+    "@eslint/js": "^10.0.1",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "eslint": "^10.8.0",
+    "globals": "^17.8.0",
+    "jsdom": "^30.0.1",
+    "prettier": "^3.9.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.65.0",
+    "vite": "^8.2.0",
+    "vitest": "^4.1.10"
+  }
+}
