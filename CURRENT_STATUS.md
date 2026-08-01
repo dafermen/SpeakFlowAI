@@ -24,7 +24,11 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T07 está completada.**
+**Ninguna. M1-T08 quedó completada.**
+
+El frontend separa contratos, onboarding, páginas de producto, sesiones de
+práctica y revisión. `App.tsx` conserva únicamente la composición y los flujos
+transversales; las pruebas de integración confirmaron el comportamiento previo.
 
 El código de producción está documentado para lectura educativa: backend,
 contratos compartidos, adaptadores, React, WebRTC y estilos. El recorrido guiado
@@ -55,6 +59,15 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T08 del 2026-08-01:
+
+- `App.tsx` pasó de aproximadamente 1.900 líneas a 380 líneas de orquestación.
+- Siete módulos nuevos separan contratos, componentes comunes y pantallas por responsabilidad.
+- Cada módulo de interfaz tiene menos de 400 líneas y documentación orientada a estudiantes.
+- Formato, ESLint, tipos, 15 pruebas web, build y presupuesto de bundle: aprobados.
+- VitePress construyó correctamente el recorrido educativo actualizado.
+- No se modificaron contratos HTTP, datos persistidos, privacidad ni comportamiento visible.
 
 Mantenimiento M1-T05 del 2026-08-01:
 

@@ -56,7 +56,7 @@ El flujo comienza en `completePractice` dentro de `apps/web/src/App.tsx`:
 5. La ruta crea `PracticeSession` y llama a `generate_feedback`.
 6. `SqlAlchemyPracticeSessionRepository.add` construye el grafo ORM.
 7. `transactional_session` confirma todo o revierte todo.
-8. La respuesta vuelve como `PracticeSessionReview` y React muestra
+8. La respuesta vuelve como `PracticeSessionReview` y `ReviewPages.tsx` muestra
    `SessionReview`.
 
 Si la API falla, `buildFallbackReview` mantiene una revisión en memoria y deja la
@@ -111,23 +111,29 @@ nunca puede leerla.
 
 ## Mapa del frontend
 
-| Símbolo                | Responsabilidad               | Entrada principal             | Salida o efecto                    |
-| ---------------------- | ----------------------------- | ----------------------------- | ---------------------------------- |
-| `App`                  | Orquestar toda la experiencia | adaptadores opcionales        | vista React y llamadas a servicios |
-| `Onboarding`           | Crear un perfil reanudable    | preferencias iniciales        | preferencias y perfil local        |
-| `Home`                 | Recomendar siguiente práctica | nombre y progreso             | navegación al catálogo             |
-| `Catalog`              | Mostrar modos y escenarios    | contenido JSON                | escenario seleccionado             |
-| `Setup`                | Configurar la práctica        | escenario y preferencias      | `SessionSetup`                     |
-| `RealtimeTutorSession` | Ejecutar voz real             | configuración y callbacks     | `CompletedSession`                 |
-| `TutorSession`         | Ejecutar demo local           | configuración y texto         | `CompletedSession`                 |
-| `SessionReview`        | Presentar feedback            | revisión y estado de guardado | reintento o regreso                |
-| `ProgressDashboard`    | Mostrar agregados             | `LearnerProgress`             | nueva práctica o reintento         |
-| `Settings`             | Editar preferencias           | `Preferences`                 | cambios parciales                  |
+La interfaz está dividida por responsabilidad. Empieza por `appTypes.ts`, continúa
+por una pantalla pequeña y deja `App.tsx` para el final: así primero conoces las
+piezas y después ves cómo se coordinan.
 
-`App.tsx` es grande porque el MVP conserva sus pantallas en un solo archivo. Para
-leerlo, no avances línea por línea: localiza primero la función de la tabla y
-después sigue sus propiedades hacia `App`. Una refactorización futura puede mover
-cada pantalla a su propio archivo sin cambiar esos contratos.
+| Archivo                    | Símbolos principales                       | Responsabilidad educativa                           |
+| -------------------------- | ------------------------------------------ | --------------------------------------------------- |
+| `appTypes.ts`              | `View`, `SessionSetup`, `CompletedSession` | Contratos que conectan módulos sin detalles de UI   |
+| `sharedComponents.tsx`     | `ProductNavigation`, `SummaryItem`         | Componentes pequeños reutilizados entre pantallas   |
+| `Onboarding.tsx`           | `Onboarding`, pasos y selectores           | Creación reanudable del perfil local                |
+| `ProductPages.tsx`         | `Home`, `Catalog`, `Setup`                 | Descubrimiento y preparación de una práctica        |
+| `RealtimeTutorSession.tsx` | `RealtimeTutorSession`                     | Ciclo de vida WebRTC, audio y recuperación          |
+| `TutorSession.tsx`         | `TutorSession`                             | Alternativa determinista sin voz ni red             |
+| `ReviewPages.tsx`          | revisión, progreso y preferencias          | Resultados persistidos y configuración              |
+| `App.tsx`                  | `App` y callbacks transversales            | Composición, navegación y coordinación de servicios |
+
+Cada archivo comienza explicando su frontera y las funciones importantes conservan
+su propósito, entradas, salidas y efectos. Ningún módulo de pantalla supera las
+400 líneas; `App.tsx` quedó como orquestador en lugar de contener toda la interfaz.
+
+Para seguir una acción, abre el componente que dibuja el botón, identifica el
+callback recibido por propiedades y busca dónde `App` lo conecta con otro módulo.
+Por ejemplo, `Setup` produce `SessionSetup`, `RealtimeTutorSession` produce
+`CompletedSession` y `App.completePractice` lo transforma en una petición a la API.
 
 ## Mapa del backend
 
