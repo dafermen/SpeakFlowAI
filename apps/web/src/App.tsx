@@ -1,3 +1,11 @@
+/**
+ * Composición principal de la experiencia React de SpeakFlowAI.
+ *
+ * El archivo contiene las pantallas del MVP y el orquestador `App`. Los módulos
+ * vecinos encapsulan contenido, almacenamiento, HTTP, tutor local y WebRTC; aquí
+ * se conectan mediante estado y callbacks explícitos.
+ */
+
 import {
   SpeakFlowApiClient,
   type CompleteSessionInput,
@@ -67,27 +75,33 @@ import {
   type VoiceUsage,
 } from "./realtimeClient";
 
+/** Pantallas posibles de la navegación local; no se usa un router externo. */
 type View =
   "home" | "catalog" | "setup" | "session" | "review" | "progress" | "settings";
+/** Porción del cliente HTTP que necesita la interfaz, útil para inyectar dobles. */
 type ApiClient = Pick<
   SpeakFlowApiClient,
   "saveLocalProfile" | "completeSession" | "getProgress"
 >;
 
+/** Dependencias opcionales que hacen que `App` sea comprobable sin red ni navegador real. */
 interface AppProps {
   apiClient?: ApiClient;
   storage?: PreferencesStorage;
 }
 
+/** Origen público de FastAPI; nunca contiene credenciales. */
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
 
+/** Opciones locales que el onboarding convierte en metas del perfil. */
 const goalOptions = [
   "Hablar con más confianza",
   "Trabajar en inglés",
   "Preparar entrevistas",
   "Viajar y conversar",
 ];
+/** Temas iniciales que personalizan el perfil sin llamadas externas. */
 const topicOptions = [
   "Vida diaria",
   "Tecnología",
@@ -95,6 +109,7 @@ const topicOptions = [
   "Viajes",
   "Cultura",
 ];
+/** Traducción visible de los valores CEFR almacenados en preferencias. */
 const levelLabels: Record<Preferences["englishLevel"], string> = {
   unsure: "No estoy seguro",
   a2: "A2 · Básico",
@@ -103,12 +118,19 @@ const levelLabels: Record<Preferences["englishLevel"], string> = {
   c1: "C1 · Avanzado",
 };
 
+/** Devuelve un arreglo nuevo añadiendo o retirando una selección múltiple. */
 function toggleChoice(values: string[], value: string): string[] {
   return values.includes(value)
     ? values.filter((item) => item !== value)
     : [...values, value];
 }
 
+/**
+ * Asistente de seis pasos que crea preferencias y perfil de aprendizaje.
+ *
+ * Mantiene un borrador reanudable en LocalStorage después de cada cambio. Solo
+ * el último paso llama a `onComplete`, que intenta sincronizar también con la API.
+ */
 function Onboarding({
   onComplete,
   preferences,
@@ -133,6 +155,7 @@ function Onboarding({
   const [workingPreferences, setWorkingPreferences] = useState(preferences);
   const [busy, setBusy] = useState(false);
 
+  /** Actualiza simultáneamente borrador, preferencias de trabajo y almacenamiento. */
   const saveDraft = (
     nextDraft: typeof draft,
     preferenceChanges: Partial<Preferences> = {},
@@ -150,6 +173,7 @@ function Onboarding({
   const next = () => saveDraft({ ...draft, step: Math.min(5, draft.step + 1) });
   const back = () => saveDraft({ ...draft, step: Math.max(0, draft.step - 1) });
 
+  /** Bloquea el botón y entrega una configuración final sin el borrador temporal. */
   const finish = async () => {
     setBusy(true);
     await onComplete(
@@ -164,6 +188,7 @@ function Onboarding({
     );
   };
 
+  // Cada paso declara su requisito mínimo antes de habilitar Continuar.
   const canContinue =
     (draft.step !== 0 || draft.displayName.trim().length > 0) &&
     (draft.step !== 2 || draft.goals.length > 0) &&
@@ -367,6 +392,7 @@ function Onboarding({
   );
 }
 
+/** Marco visual compartido por cada paso del onboarding. */
 function OnboardingStep({
   children,
   description,
@@ -389,10 +415,12 @@ function OnboardingStep({
   );
 }
 
+/** Distribuye opciones seleccionables de manera responsive. */
 function ChoiceGrid({ children }: { children: ReactNode }) {
   return <div className="choice-grid">{children}</div>;
 }
 
+/** Botón de selección múltiple que expone su estado mediante `aria-pressed`. */
 function ChoiceButton({
   active,
   label,
@@ -415,6 +443,7 @@ function ChoiceButton({
   );
 }
 
+/** Par término/valor reutilizado en resúmenes de sesión y progreso. */
 function SummaryItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
@@ -424,6 +453,7 @@ function SummaryItem({ label, value }: { label: string; value: string }) {
   );
 }
 
+/** Navegación lateral/escritorio y barra inferior/móvil de las vistas principales. */
 function ProductNavigation({
   onNavigate,
   view,
@@ -469,6 +499,7 @@ function ProductNavigation({
   );
 }
 
+/** Inicio personalizado con práctica recomendada y resumen de progreso. */
 function Home({
   displayName,
   onStart,
@@ -541,6 +572,7 @@ function Home({
   );
 }
 
+/** Catálogo local que enlaza cada modo con su escenario publicado. */
 function Catalog({
   onSelect,
 }: {
@@ -583,6 +615,7 @@ function Catalog({
   );
 }
 
+/** Decisiones del alumno necesarias para iniciar una práctica. */
 interface SessionSetup {
   scenarioId: string;
   difficulty: "a2" | "b1" | "b2" | "c1";
@@ -590,6 +623,7 @@ interface SessionSetup {
   provider: "realtime" | "deterministic";
 }
 
+/** Resultado neutral producido tanto por el tutor local como por WebRTC. */
 interface CompletedSession {
   setup: SessionSetup;
   startedAtUtc: string;
@@ -599,6 +633,7 @@ interface CompletedSession {
   outputTokens: number;
 }
 
+/** Pantalla que elige dificultad, duración y proveedor antes de hablar. */
 function Setup({
   initialScenarioId,
   onBack,
@@ -706,6 +741,7 @@ function Setup({
   );
 }
 
+/** Etiquetas visibles de la máquina de estados WebRTC. */
 const stateLabels: Record<VoiceConnectionState, string> = {
   idle: "Lista",
   "requesting-permission": "Solicitando micrófono",
@@ -719,6 +755,7 @@ const stateLabels: Record<VoiceConnectionState, string> = {
   error: "Conexión interrumpida",
 };
 
+/** Mensajes seguros y accionables asociados con códigos normalizados de voz. */
 const voiceErrorMessages: Record<string, string> = {
   microphone_denied:
     "El navegador no recibió permiso para usar el micrófono. Revisa el permiso del sitio e inténtalo otra vez.",
@@ -756,6 +793,12 @@ const voiceErrorMessages: Record<string, string> = {
     "Se recibió una respuesta de voz incompleta. Intenta iniciar una sesión nueva.",
 };
 
+/**
+ * Pantalla de conversación por voz que posee un `WebRtcRealtimeClient`.
+ *
+ * Convierte callbacks del adaptador en estado React, fusiona transcripciones
+ * parciales, controla tiempo y entrega un `CompletedSession` al terminar.
+ */
 function RealtimeTutorSession({
   onComplete,
   onFallback,
@@ -768,6 +811,7 @@ function RealtimeTutorSession({
   setup: SessionSetup;
 }) {
   const scenario = findScenario(setup.scenarioId);
+  // Las referencias sobreviven renders sin provocar uno nuevo al cambiar.
   const clientRef = useRef<WebRtcRealtimeClient | null>(null);
   const startedAtRef = useRef(new Date().toISOString());
   const finishedRef = useRef(false);
@@ -785,6 +829,7 @@ function RealtimeTutorSession({
     Math.min(setup.duration, 15) * 60,
   );
 
+  // Desmontar la pantalla siempre libera micrófono, WebRTC y audio remoto.
   useEffect(
     () => () => {
       clientRef.current?.stop(false);
@@ -792,6 +837,7 @@ function RealtimeTutorSession({
     [],
   );
 
+  // En móvil nativo, pasar a segundo plano pausa la pista por privacidad.
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
     let disposed = false;
@@ -811,6 +857,7 @@ function RealtimeTutorSession({
     };
   }, []);
 
+  /** Acumula deltas del tutor y reemplaza cada turno cuando llega su versión final. */
   const upsertTranscript = (next: VoiceTranscript) => {
     setTranscripts((current) => {
       const existing = current.find((item) => item.id === next.id);
@@ -826,6 +873,7 @@ function RealtimeTutorSession({
     });
   };
 
+  /** Crea un cliente nuevo y conecta sus cuatro canales de eventos con React. */
   const start = () => {
     setErrorCode("");
     const client = new WebRtcRealtimeClient(
@@ -848,6 +896,7 @@ function RealtimeTutorSession({
     });
   };
 
+  /** Cierra una sola vez y transforma transcripciones finales en turnos persistibles. */
   const finish = useCallback(() => {
     if (finishedRef.current) return;
     finishedRef.current = true;
@@ -864,6 +913,7 @@ function RealtimeTutorSession({
     });
   }, [onComplete, setup, transcripts, usage.inputTokens, usage.outputTokens]);
 
+  // El reloj solo avanza mientras la conversación está activa y finaliza en cero.
   useEffect(() => {
     if (!["listening", "processing", "speaking"].includes(state)) return;
     const timer = window.setInterval(() => {
@@ -1028,6 +1078,12 @@ function RealtimeTutorSession({
   );
 }
 
+/**
+ * Alternativa determinista de práctica que funciona sin micrófono ni API de voz.
+ *
+ * El alumno escribe como si hablara. Cada envío añade su turno y una respuesta
+ * predecible, lo que hace posible enseñar y probar el flujo completo offline.
+ */
 function TutorSession({
   onComplete,
   preferences,
@@ -1047,6 +1103,7 @@ function TutorSession({
   const [muted, setMuted] = useState(false);
   const [captions, setCaptions] = useState(preferences.captionsEnabled);
 
+  /** Añade un turno no vacío y programa la respuesta local del tutor. */
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const text = message.trim();
@@ -1195,6 +1252,12 @@ function TutorSession({
   );
 }
 
+/**
+ * Presenta carga, error, estado vacío o métricas de progreso.
+ *
+ * Mantener esos estados en un componente evita que `App` mezcle decisiones de
+ * datos con el marcado de cada alternativa visual.
+ */
 function ProgressDashboard({
   error,
   loading,
@@ -1352,6 +1415,12 @@ function ProgressDashboard({
   );
 }
 
+/**
+ * Revisión final de una práctica guardada o conservada temporalmente en memoria.
+ *
+ * Cuando `saved` es falso, el feedback sigue disponible y `onRetry` vuelve a
+ * intentar la misma entrada pendiente sin inventar una sesión remota.
+ */
 function SessionReview({
   loading,
   onHome,
@@ -1481,6 +1550,7 @@ function SessionReview({
   );
 }
 
+/** Preferencias locales de apariencia, subtítulos, ayuda y retención consentida. */
 function Settings({
   onChange,
   preferences,
@@ -1552,6 +1622,13 @@ function Settings({
   );
 }
 
+/**
+ * Orquestador raíz de navegación, preferencias, API, sesiones y progreso.
+ *
+ * Las dependencias opcionales permiten probar este componente con memoria y un
+ * cliente falso. En producción se crean adaptadores reales solo una vez mediante
+ * `useMemo`.
+ */
 export function App({
   apiClient: apiClientProp,
   storage: storageProp,
@@ -1565,6 +1642,7 @@ export function App({
     [apiClientProp],
   );
   const loaded = useMemo(() => storage.load(), [storage]);
+  // Estado duradero cargado de LocalStorage y estado efímero de navegación/datos.
   const [preferences, setPreferences] = useState(loaded.value);
   const [displayName, setDisplayName] = useState("");
   const [view, setView] = useState<View>("home");
@@ -1586,6 +1664,7 @@ export function App({
       : "",
   );
 
+  // El atributo global permite que los tokens CSS resuelvan el tema elegido.
   useEffect(() => {
     if (preferences.theme === "system") {
       delete document.documentElement.dataset.theme;
@@ -1594,6 +1673,7 @@ export function App({
     }
   }, [preferences.theme]);
 
+  /** Actualiza la interfaz inmediatamente y luego intenta guardar el mismo valor. */
   const updatePreferences = (changes: Partial<Preferences>) => {
     const next = { ...preferences, ...changes };
     setPreferences(next);
@@ -1603,6 +1683,7 @@ export function App({
     }
   };
 
+  /** Guarda una sesión o crea una revisión local recuperable si falla la API. */
   const persistSession = useCallback(
     async (input: CompleteSessionInput) => {
       setReviewLoading(true);
@@ -1622,6 +1703,7 @@ export function App({
     [apiClient],
   );
 
+  /** Normaliza la salida de cualquier tutor al contrato `CompleteSessionInput`. */
   const completePractice = useCallback(
     (completed: CompletedSession) => {
       const elapsedSeconds = Math.max(
@@ -1657,6 +1739,7 @@ export function App({
     [persistSession, preferences.transcriptRetentionEnabled],
   );
 
+  /** Refresca el dashboard manteniendo separados carga, resultado y error. */
   const loadProgress = useCallback(async () => {
     setProgressLoading(true);
     setProgressError(false);
@@ -1669,6 +1752,7 @@ export function App({
     setProgressLoading(false);
   }, [apiClient]);
 
+  // Inicio y Progreso muestran datos recientes después de completar onboarding.
   useEffect(() => {
     if (
       preferences.onboardingCompleted &&
@@ -1678,6 +1762,12 @@ export function App({
     }
   }, [loadProgress, preferences.onboardingCompleted, view]);
 
+  /**
+   * Confirma preferencias localmente y sincroniza el perfil cuando la API responde.
+   *
+   * El acceso a la aplicación no depende de la red: un fallo remoto deja un aviso
+   * y conserva la configuración en el navegador.
+   */
   const completeOnboarding = async (
     nextPreferences: Preferences,
     nextDisplayName: string,
@@ -1710,6 +1800,7 @@ export function App({
     }
   };
 
+  // Antes de finalizar onboarding no se monta el shell principal del producto.
   if (!preferences.onboardingCompleted) {
     return (
       <>

@@ -1,3 +1,5 @@
+"""Implementación SQLAlchemy del puerto de perfiles de aprendizaje."""
+
 from __future__ import annotations
 
 from uuid import UUID
@@ -13,10 +15,20 @@ from speakflow_api.infrastructure.models import (
 
 
 class SqlAlchemyLearnerProfileRepository:
+    """Traduce entre ``LearnerProfile`` y las tablas normalizadas del perfil.
+
+    El repositorio no confirma transacciones. Esa decisión pertenece a la unidad
+    de trabajo que lo invoca mediante ``transactional_session``.
+    """
+
     def __init__(self, session: Session) -> None:
+        """Recibe la sesión activa donde se programarán lecturas y escrituras."""
+
         self._session = session
 
     def add(self, profile: LearnerProfile) -> None:
+        """Convierte un perfil nuevo, sus metas y temas en modelos ORM."""
+
         self._session.add(
             LearnerProfileModel(
                 id=str(profile.id),
@@ -40,6 +52,8 @@ class SqlAlchemyLearnerProfileRepository:
         )
 
     def get(self, profile_id: UUID) -> LearnerProfile | None:
+        """Reconstruye el dominio por UUID o devuelve ``None`` si no existe."""
+
         record = self._session.get(LearnerProfileModel, str(profile_id))
         if record is None:
             return None
@@ -58,6 +72,12 @@ class SqlAlchemyLearnerProfileRepository:
         )
 
     def save(self, profile: LearnerProfile) -> None:
+        """Inserta o actualiza el perfil y reemplaza sus colecciones ordenadas.
+
+        ``flush`` materializa las eliminaciones antes de recrear metas y temas,
+        evitando colisiones con sus restricciones de unicidad.
+        """
+
         record = self._session.get(LearnerProfileModel, str(profile.id))
         if record is None:
             self.add(profile)

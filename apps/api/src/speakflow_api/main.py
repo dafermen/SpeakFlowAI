@@ -1,3 +1,10 @@
+"""Compone la aplicación FastAPI y conecta sus adaptadores de entrada y salida.
+
+Importar este módulo crea la aplicación, carga la configuración, prepara la
+conexión de base de datos y registra las rutas. Uvicorn utiliza ``app`` como
+punto de entrada del backend.
+"""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -12,6 +19,8 @@ from speakflow_api.infrastructure.openai_realtime import OpenAIRealtimeGateway
 
 
 class HealthResponse(BaseModel):
+    """Respuesta mínima que permite comprobar que la API está disponible."""
+
     status: str
     service: str
     version: str
@@ -51,4 +60,6 @@ app.include_router(create_realtime_router(_settings, _realtime_gateway))
 
 @app.get("/api/v1/health", response_model=HealthResponse, tags=["system"])
 def health() -> HealthResponse:
+    """Devuelve identidad y versión sin consultar base de datos ni proveedores."""
+
     return HealthResponse(status="ok", service="speakflow-api", version="1.0.0")

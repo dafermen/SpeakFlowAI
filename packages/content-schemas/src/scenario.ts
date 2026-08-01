@@ -1,7 +1,10 @@
+/** Contrato y validador del contenido JSON que define una situación de práctica. */
+
 import Ajv2020, { type ErrorObject } from "ajv/dist/2020";
 
 import scenarioSchema from "../../../content/schemas/scenario.schema.json";
 
+/** Escenario publicado que la web puede presentar y ejecutar. */
 export interface Scenario {
   schemaVersion: 1;
   id: string;
@@ -20,11 +23,13 @@ export interface Scenario {
   tags: string[];
 }
 
+/** Error seguro con ruta JSON y mensaje comprensible para desarrollo. */
 export interface ContentValidationError {
   path: string;
   message: string;
 }
 
+/** Resultado discriminado compartido por todos los validadores de contenido. */
 export type ContentValidationResult<T> =
   { ok: true; value: T } | { ok: false; errors: ContentValidationError[] };
 
@@ -34,6 +39,7 @@ const ajv = new Ajv2020({
 });
 const validateScenario = ajv.compile<Scenario>(scenarioSchema);
 
+/** Elimina detalles internos de AJV antes de exponer un error al consumidor. */
 function toPublicError(error: ErrorObject): ContentValidationError {
   return {
     path: error.instancePath || "/",
@@ -41,6 +47,11 @@ function toPublicError(error: ErrorObject): ContentValidationError {
   };
 }
 
+/**
+ * Valida un valor desconocido contra el JSON Schema oficial de escenario.
+ *
+ * @returns El mismo valor ya tipado o todos los errores encontrados por AJV.
+ */
 export function parseScenario(
   input: unknown,
 ): ContentValidationResult<Scenario> {

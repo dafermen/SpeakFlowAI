@@ -1,3 +1,9 @@
+"""Modelos ORM que describen el esquema relacional persistente.
+
+Estas clases pertenecen a infraestructura y no deben escapar hacia los casos de
+uso. Los repositorios las traducen a entidades de dominio inmutables.
+"""
+
 from __future__ import annotations
 
 from datetime import UTC, datetime
@@ -18,10 +24,14 @@ from speakflow_api.infrastructure.database import Base
 
 
 def utc_now() -> datetime:
+    """Devuelve una marca de tiempo consciente de zona en UTC para SQLAlchemy."""
+
     return datetime.now(UTC)
 
 
 class LearnerProfileModel(Base):
+    """Fila principal del perfil y raíz de sus metas, temas y sesiones."""
+
     __tablename__ = "learner_profiles"
     __table_args__ = (
         CheckConstraint(
@@ -62,6 +72,8 @@ class LearnerProfileModel(Base):
 
 
 class LearnerGoalModel(Base):
+    """Meta seleccionada por el alumno con posición estable de presentación."""
+
     __tablename__ = "learner_goals"
     __table_args__ = (UniqueConstraint("learner_id", "value", name="uq_learner_goals_value"),)
 
@@ -75,6 +87,8 @@ class LearnerGoalModel(Base):
 
 
 class LearnerTopicModel(Base):
+    """Tema de interés del alumno con posición estable de presentación."""
+
     __tablename__ = "learner_topics"
     __table_args__ = (UniqueConstraint("learner_id", "value", name="uq_learner_topics_value"),)
 
@@ -88,6 +102,8 @@ class LearnerTopicModel(Base):
 
 
 class PracticeSessionModel(Base):
+    """Fila principal de una práctica, enlazada con turnos y feedback."""
+
     __tablename__ = "practice_sessions"
     __table_args__ = (
         CheckConstraint(
@@ -127,6 +143,8 @@ class PracticeSessionModel(Base):
 
 
 class SessionTurnModel(Base):
+    """Texto opcionalmente retenido de un turno, ordenado dentro de la sesión."""
+
     __tablename__ = "session_turns"
     __table_args__ = (
         CheckConstraint("speaker IN ('learner', 'tutor')", name="ck_session_turns_speaker"),
@@ -144,6 +162,8 @@ class SessionTurnModel(Base):
 
 
 class SessionFeedbackModel(Base):
+    """Resumen pedagógico uno-a-uno asociado con una sesión terminada."""
+
     __tablename__ = "session_feedback"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -178,6 +198,8 @@ class SessionFeedbackModel(Base):
 
 
 class FeedbackCorrectionModel(Base):
+    """Corrección gramatical hija del feedback de una sesión."""
+
     __tablename__ = "feedback_corrections"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -191,6 +213,8 @@ class FeedbackCorrectionModel(Base):
 
 
 class VocabularyItemModel(Base):
+    """Elemento de vocabulario contextual hijo del feedback."""
+
     __tablename__ = "vocabulary_items"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -204,6 +228,8 @@ class VocabularyItemModel(Base):
 
 
 class ImprovedPhraseModel(Base):
+    """Frase recomendada cuya posición conserva el orden pedagógico."""
+
     __tablename__ = "improved_phrases"
     __table_args__ = (
         UniqueConstraint("feedback_id", "ordinal", name="uq_improved_phrases_ordinal"),
@@ -219,6 +245,8 @@ class ImprovedPhraseModel(Base):
 
 
 class FeedbackObservationModel(Base):
+    """Observación categorizada hija del feedback de una sesión."""
+
     __tablename__ = "feedback_observations"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)

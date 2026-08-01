@@ -1,3 +1,5 @@
+/** Catálogo tipado que conecta contenido JSON con textos visibles de la aplicación. */
+
 import type { LearningMode, Scenario } from "@speakflow/content-schemas";
 
 import learningModes from "../../../content/learning-modes/learning-modes.json";
@@ -6,7 +8,9 @@ import printerOffline from "../../../content/scenarios/it-support.json";
 import backendInterview from "../../../content/scenarios/software-interviews.json";
 import dailyStandup from "../../../content/scenarios/workplace.json";
 
+/** Modos de aprendizaje disponibles en la pantalla Practicar. */
 export const modes = learningModes as LearningMode[];
+/** Escenarios publicados en el MVP, en el orden de presentación. */
 export const scenarios = [
   coffeeShop,
   dailyStandup,
@@ -46,14 +50,21 @@ const copy: Record<string, string> = {
     "Responder con contexto, decisión, resultado y aprendizaje.",
 };
 
+/** Resuelve una clave de contenido; conserva la clave para hacer visible un faltante. */
 export function translate(key: string): string {
   return copy[key] ?? key;
 }
 
+/**
+ * Busca un escenario por ID.
+ *
+ * @returns El escenario solicitado o el primero del catálogo como recuperación segura.
+ */
 export function findScenario(id: string): Scenario {
   return scenarios.find((scenario) => scenario.id === id) ?? scenarios[0]!;
 }
 
+/** Asociación entre el identificador semántico de icono y su representación visual. */
 export const modeIcons = {
   conversation: "💬",
   workplace: "🏢",

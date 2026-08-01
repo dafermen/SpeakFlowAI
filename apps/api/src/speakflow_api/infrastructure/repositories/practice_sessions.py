@@ -1,3 +1,5 @@
+"""Implementación SQLAlchemy del puerto de sesiones de práctica."""
+
 from __future__ import annotations
 
 from uuid import UUID
@@ -25,10 +27,20 @@ from speakflow_api.infrastructure.models import (
 
 
 class SqlAlchemyPracticeSessionRepository:
+    """Mapea el agregado ``PracticeSession`` y todas sus relaciones.
+
+    La sesión y el feedback siempre se guardan. El texto de los turnos solo se
+    convierte a modelos ORM cuando existe consentimiento de retención.
+    """
+
     def __init__(self, session: Session) -> None:
+        """Conserva la sesión SQLAlchemy que controla la transacción."""
+
         self._session = session
 
     def add(self, practice: PracticeSession) -> None:
+        """Programa el agregado completo para inserción respetando privacidad."""
+
         feedback = practice.feedback
         self._session.add(
             PracticeSessionModel(
@@ -89,12 +101,16 @@ class SqlAlchemyPracticeSessionRepository:
         )
 
     def get(self, session_id: UUID) -> PracticeSession | None:
+        """Busca una práctica por UUID y la traduce de ORM a dominio."""
+
         record = self._session.get(PracticeSessionModel, str(session_id))
         if record is None:
             return None
         return self._to_domain(record)
 
     def list_recent(self, learner_id: UUID, limit: int) -> tuple[PracticeSession, ...]:
+        """Devuelve prácticas recientes de un alumno en orden descendente."""
+
         records = self._session.scalars(
             select(PracticeSessionModel)
             .where(PracticeSessionModel.learner_id == str(learner_id))
@@ -104,6 +120,8 @@ class SqlAlchemyPracticeSessionRepository:
         return tuple(self._to_domain(record) for record in records)
 
     def _to_domain(self, record: PracticeSessionModel) -> PracticeSession:
+        """Reconstruye el agregado inmutable a partir del grafo ORM cargado."""
+
         feedback = record.feedback
         return PracticeSession(
             id=UUID(record.id),

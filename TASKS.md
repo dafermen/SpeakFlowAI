@@ -135,3 +135,6 @@ Una sola tarea puede estar `IN_PROGRESS`. La siguiente se desbloquea cuando la a
 | 2 | M1-T02 | Diagnosticar y recuperar fallos previos a la solicitud SDP | DONE |
 | 3 | M1-T03 | Corregir el contexto de red al guardar sesiones y cargar progreso | DONE |
 | 4 | M1-T04 | Mejorar la precisión y el control de idioma de la transcripción de voz | DONE |
+| 5 | M1-T05 | Definir el estándar educativo y documentar el backend Python | DONE |
+| 6 | M1-T06 | Documentar paquetes TypeScript y servicios del frontend | DONE |
+| 7 | M1-T07 | Documentar la interfaz React y crear el recorrido guiado del código | DONE |

@@ -29,6 +29,14 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: "Voz Realtime", link: "/docs/REALTIME_VOICE" },
         { text: "Feedback y retención", link: "/docs/FEEDBACK_AND_RETENTION" },
         { text: "Preparar entorno", link: "/docs/development/GETTING_STARTED" },
+        {
+          text: "Estándar de documentación",
+          link: "/docs/development/CODE_DOCUMENTATION_STANDARD",
+        },
+        {
+          text: "Recorrido por el código",
+          link: "/docs/development/CODE_WALKTHROUGH",
+        },
         { text: "Base de datos", link: "/docs/DATABASE_STRATEGY" },
         { text: "LocalStorage", link: "/docs/LOCAL_STORAGE" },
         { text: "Contenido JSON", link: "/docs/CONTENT_STRATEGY" },

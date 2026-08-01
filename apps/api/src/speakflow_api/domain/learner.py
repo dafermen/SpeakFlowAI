@@ -1,3 +1,5 @@
+"""Entidades puras que representan a la persona que practica inglés."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -7,6 +9,12 @@ from uuid import UUID
 
 @dataclass(frozen=True, slots=True)
 class LearnerProfile:
+    """Perfil local independiente de HTTP, SQLAlchemy y LocalStorage.
+
+    Las colecciones son tuplas para mantener el objeto inmutable. Las marcas de
+    tiempo permiten distinguir creación y última actualización en persistencia.
+    """
+
     id: UUID
     native_language: str
     english_level: str

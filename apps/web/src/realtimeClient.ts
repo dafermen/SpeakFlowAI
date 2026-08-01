@@ -1,3 +1,11 @@
+/**
+ * Adaptador WebRTC que traduce la interfaz del navegador a eventos simples de React.
+ *
+ * Este módulo controla micrófono, negociación SDP, audio remoto, canal de datos,
+ * reconexión y normalización de errores. Nunca recibe la clave de OpenAI.
+ */
+
+/** Estados observables de una sesión de voz desde antes del permiso hasta su cierre. */
 export type VoiceConnectionState =
   | "idle"
   | "requesting-permission"
@@ -10,6 +18,7 @@ export type VoiceConnectionState =
   | "ended"
   | "error";
 
+/** Fragmento o transcripción final que la interfaz muestra como un turno. */
 export interface VoiceTranscript {
   id: string;
   speaker: "learner" | "tutor";
@@ -17,12 +26,14 @@ export interface VoiceTranscript {
   final: boolean;
 }
 
+/** Uso acumulado reportado por el proveedor para visibilidad de coste. */
 export interface VoiceUsage {
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
 }
 
+/** Funciones con las que el adaptador comunica cambios sin depender de React. */
 export interface RealtimeCallbacks {
   onError: (code: string) => void;
   onStateChange: (state: VoiceConnectionState) => void;
@@ -30,15 +41,18 @@ export interface RealtimeCallbacks {
   onUsage: (usage: VoiceUsage) => void;
 }
 
+/** Preferencias necesarias para construir una nueva sesión de voz. */
 export interface RealtimeStartOptions {
   scenarioId: string;
   speakingSpeed: "slow" | "normal" | "fast";
   voiceId: string;
 }
 
+/** Etapa de arranque usada para convertir excepciones en mensajes accionables. */
 export type RealtimeStartStage =
   "microphone" | "webrtc-initialization" | "api-request" | "webrtc-negotiation";
 
+// Errores deliberados del cliente que pueden atravesar un bloque `catch` sin perder categoría.
 const KNOWN_START_ERROR_CODES = new Set([
   "missing_sdp",
   "not_configured",
@@ -46,6 +60,7 @@ const KNOWN_START_ERROR_CODES = new Set([
   "session_start_failed",
 ]);
 
+// Alfabetos no compatibles con una práctica cuyo objetivo explícito es inglés.
 const NON_ENGLISH_SCRIPT_PATTERNS = [
   /\p{Script=Arabic}/u,
   /\p{Script=Cyrillic}/u,
@@ -58,6 +73,12 @@ const NON_ENGLISH_SCRIPT_PATTERNS = [
   /\p{Script=Thai}/u,
 ];
 
+/**
+ * Limpia la transcripción del alumno y oculta alfabetos incompatibles con inglés.
+ *
+ * @param transcript Texto asíncrono entregado por el proveedor.
+ * @returns Texto recortado o una indicación segura para repetir el turno.
+ */
 export function normalizeLearnerTranscript(transcript: string): string {
   const normalized = transcript.trim();
   if (
@@ -68,18 +89,26 @@ export function normalizeLearnerTranscript(transcript: string): string {
   return "No pude transcribir este turno en inglés. Inténtalo otra vez.";
 }
 
+/** Lee una propiedad textual de una excepción desconocida sin forzar un cast inseguro. */
 function errorProperty(error: unknown, property: "message" | "name"): string {
   if (!error || typeof error !== "object" || !(property in error)) return "";
   const value = (error as Record<string, unknown>)[property];
   return typeof value === "string" ? value : "";
 }
 
+/** Indica si restricciones avanzadas de audio fallaron y conviene intentar audio básico. */
 export function shouldRetryBasicMicrophone(error: unknown): boolean {
   return ["OverconstrainedError", "ConstraintNotSatisfiedError"].includes(
     errorProperty(error, "name"),
   );
 }
 
+/**
+ * Convierte una excepción de arranque en un código estable para la interfaz.
+ *
+ * La etapa permite distinguir, por ejemplo, una API inalcanzable de una oferta
+ * WebRTC inválida aunque ambas puedan originarse como `TypeError` del navegador.
+ */
 export function normalizeRealtimeStartError(
   error: unknown,
   stage: RealtimeStartStage,
@@ -118,6 +147,12 @@ export function normalizeRealtimeStartError(
   return "webrtc_initialization_failed";
 }
 
+/**
+ * Invoca una implementación de `fetch` con el receptor global exigido por Chrome.
+ *
+ * Guardar `window.fetch` como propiedad y llamarlo con otro `this` produce
+ * `Illegal invocation`; esta función centraliza la corrección.
+ */
 export function fetchWithBrowserContext(
   fetcher: typeof fetch,
   input: RequestInfo | URL,
@@ -126,6 +161,7 @@ export function fetchWithBrowserContext(
   return fetcher.call(globalThis, input, init);
 }
 
+/** Subconjunto tolerante del protocolo de eventos que consume este cliente. */
 interface RealtimeServerEvent {
   type?: string;
   item_id?: string;
@@ -142,6 +178,7 @@ interface RealtimeServerEvent {
   };
 }
 
+/** Reduce detalles del proveedor a categorías seguras que la UI sabe presentar. */
 export function normalizeRealtimeError(
   error?: RealtimeServerEvent["error"],
 ): string {
@@ -164,6 +201,12 @@ export function normalizeRealtimeError(
   return "provider_error";
 }
 
+/**
+ * Traduce un evento del canal de datos a una única actualización de aplicación.
+ *
+ * Eventos desconocidos producen un objeto vacío. Esto permite que OpenAI añada
+ * eventos sin romper clientes anteriores.
+ */
 export function interpretRealtimeEvent(event: RealtimeServerEvent): {
   state?: VoiceConnectionState;
   transcript?: VoiceTranscript;
@@ -226,6 +269,12 @@ export function interpretRealtimeEvent(event: RealtimeServerEvent): {
   }
 }
 
+/**
+ * Cliente de una sesión Realtime WebRTC completa.
+ *
+ * La clase posee recursos del navegador y por eso debe cerrarse con `stop`.
+ * Notifica estado, transcripción, uso y errores mediante callbacks inyectados.
+ */
 export class WebRtcRealtimeClient {
   private peerConnection: RTCPeerConnection | null = null;
   private dataChannel: RTCDataChannel | null = null;
@@ -236,6 +285,14 @@ export class WebRtcRealtimeClient {
   private paused = false;
   private disconnectTimer: number | null = null;
 
+  /**
+   * Crea el cliente sin pedir todavía permiso de micrófono.
+   *
+   * @param callbacks Destino de los eventos interpretados.
+   * @param apiBaseUrl Backend que media la negociación SDP.
+   * @param fetcher Transporte inyectable para pruebas.
+   * @param disconnectGraceMs Espera antes de declarar una desconexión transitoria.
+   */
   constructor(
     private readonly callbacks: RealtimeCallbacks,
     private readonly apiBaseUrl = "http://127.0.0.1:8000",
@@ -243,6 +300,12 @@ export class WebRtcRealtimeClient {
     private readonly disconnectGraceMs = 4_000,
   ) {}
 
+  /**
+   * Solicita micrófono, crea WebRTC y negocia la sesión mediante FastAPI.
+   *
+   * Los fallos se notifican por callback y se limpian todos los recursos parciales;
+   * la promesa no propaga detalles sensibles a React.
+   */
   async start(options: RealtimeStartOptions): Promise<void> {
     this.options = options;
     this.callbacks.onStateChange("requesting-permission");
@@ -320,6 +383,7 @@ export class WebRtcRealtimeClient {
     }
   }
 
+  /** Cierra recursos actuales e inicia otra conexión con las últimas opciones. */
   async reconnect(): Promise<void> {
     if (!this.options) return;
     const options = this.options;
@@ -328,6 +392,7 @@ export class WebRtcRealtimeClient {
     await this.start(options);
   }
 
+  /** Habilita o deshabilita la pista de entrada sin terminar la sesión. */
   setPaused(paused: boolean): void {
     this.paused = paused;
     this.localStream?.getAudioTracks().forEach((track) => {
@@ -336,11 +401,13 @@ export class WebRtcRealtimeClient {
     this.callbacks.onStateChange(paused ? "paused" : "listening");
   }
 
+  /** Silencia únicamente el audio remoto que reproduce el elemento HTML. */
   setMuted(muted: boolean): void {
     this.muted = muted;
     if (this.audioElement) this.audioElement.muted = muted;
   }
 
+  /** Pide al tutor repetir su último mensaje con menor velocidad. */
   requestRepeat(): void {
     this.send({
       type: "response.create",
@@ -351,6 +418,7 @@ export class WebRtcRealtimeClient {
     });
   }
 
+  /** Actualiza la velocidad de salida del proveedor para respuestas posteriores. */
   requestSlowerSpeech(): void {
     this.send({
       type: "session.update",
@@ -361,6 +429,11 @@ export class WebRtcRealtimeClient {
     });
   }
 
+  /**
+   * Libera canal, conexión, pistas y elemento de audio.
+   *
+   * @param notify Controla si también debe publicarse el estado `ended`.
+   */
   stop(notify = true): void {
     this.clearDisconnectTimer();
     this.dataChannel?.close();
@@ -374,6 +447,7 @@ export class WebRtcRealtimeClient {
     if (notify) this.callbacks.onStateChange("ended");
   }
 
+  /** Analiza un mensaje JSON del canal y distribuye sus posibles resultados. */
   private handleMessage(serialized: string): void {
     let event: RealtimeServerEvent;
     try {
@@ -390,6 +464,11 @@ export class WebRtcRealtimeClient {
     if (interpreted.error) this.reportError(interpreted.error);
   }
 
+  /**
+   * Solicita audio con mejoras y reintenta una vez con restricciones básicas.
+   *
+   * @throws DOMException si no hay soporte, permiso o dispositivo utilizable.
+   */
   private async requestMicrophone(): Promise<MediaStream> {
     if (!navigator.mediaDevices?.getUserMedia) {
       throw new DOMException(
@@ -412,6 +491,7 @@ export class WebRtcRealtimeClient {
     }
   }
 
+  /** Aplica una gracia a `disconnected` y falla inmediatamente ante `failed`. */
   private handleConnectionStateChange(peerConnection: RTCPeerConnection): void {
     if (this.paused || this.peerConnection !== peerConnection) return;
 
@@ -438,18 +518,21 @@ export class WebRtcRealtimeClient {
     this.clearDisconnectTimer();
   }
 
+  /** Cancela la detección diferida de desconexión si sigue pendiente. */
   private clearDisconnectTimer(): void {
     if (this.disconnectTimer === null) return;
     window.clearTimeout(this.disconnectTimer);
     this.disconnectTimer = null;
   }
 
+  /** Publica un error controlado después de cancelar recuperaciones pendientes. */
   private reportError(code: string): void {
     this.clearDisconnectTimer();
     this.callbacks.onStateChange("error");
     this.callbacks.onError(code);
   }
 
+  /** Envía un evento solo cuando el canal de control está abierto. */
   private send(event: object): void {
     if (this.dataChannel?.readyState === "open") {
       this.dataChannel.send(JSON.stringify(event));

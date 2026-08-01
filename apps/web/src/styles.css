@@ -1,3 +1,12 @@
+/*
+ * Estilos de composición específicos de la aplicación web.
+ *
+ * Los colores, espacios, tipografía, radios y movimiento provienen de los tokens
+ * `--sf-*` del sistema de diseño. Este archivo organiza pantallas mobile-first;
+ * los media queries del final amplían la distribución sin cambiar el marcado.
+ */
+
+/* Base del documento y ayudas de accesibilidad globales. */
 :root {
   color: var(--sf-color-text-primary);
   background: var(--sf-color-surface-canvas);
@@ -63,6 +72,7 @@ p {
   transform: translateY(0);
 }
 
+/* Shell principal: contenido móvil primero y barra lateral desde 900 px. */
 .app-shell {
   min-height: 100dvh;
   padding-bottom: calc(76px + env(safe-area-inset-bottom));
@@ -148,6 +158,7 @@ p {
   text-transform: uppercase;
 }
 
+/* Primitivas de página compartidas por Inicio, Catálogo, Revisión y Progreso. */
 .page-stack {
   display: grid;
   gap: var(--sf-space-12);
@@ -330,6 +341,7 @@ p {
   margin-top: auto;
 }
 
+/* Formularios y preparación previa a una práctica. */
 .setup-card {
   display: grid;
   gap: var(--sf-space-6);
@@ -460,6 +472,7 @@ p {
   font-weight: 750;
 }
 
+/* Onboarding independiente del shell para centrar la primera tarea del alumno. */
 .onboarding {
   display: grid;
   width: min(100% - 2rem, 820px);
@@ -559,6 +572,7 @@ p {
   box-shadow: inset 0 0 0 1px var(--sf-color-brand-primary);
 }
 
+/* Sesiones local y Realtime: escenario, transcripción y controles persistentes. */
 .session {
   display: grid;
   gap: var(--sf-space-6);
@@ -764,6 +778,7 @@ p {
   text-align: center;
 }
 
+/* Estados de espera, error y vacío que ocupan el foco principal. */
 .completion-card {
   display: grid;
   max-width: 680px;
@@ -802,6 +817,7 @@ p {
   line-height: 1.6;
 }
 
+/* Revisión pedagógica y bloques de feedback posteriores a la sesión. */
 .review {
   max-width: 980px;
   margin: 0 auto;
@@ -908,6 +924,7 @@ p {
   color: var(--sf-color-text-muted);
 }
 
+/* Dashboard de métricas, distribuciones e historial reciente. */
 .progress {
   max-width: 1100px;
   margin: 0 auto;
@@ -1012,6 +1029,7 @@ p {
   backdrop-filter: blur(16px);
 }
 
+/* Navegación inferior en móvil; el mismo componente se vuelve lateral en escritorio. */
 .product-navigation ul {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1072,6 +1090,7 @@ p {
   }
 }
 
+/* Distribución intermedia para tabletas y ventanas de anchura media. */
 @media (min-width: 600px) {
   .mode-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1114,6 +1133,7 @@ p {
   }
 }
 
+/* Distribución expandida con barra lateral y mayor densidad de contenido. */
 @media (min-width: 900px) {
   .app-shell {
     display: grid;
@@ -1170,6 +1190,7 @@ p {
   }
 }
 
+/* Respeta la preferencia del sistema sin eliminar información o controles. */
 @media (prefers-reduced-motion: reduce) {
   .home-hero__orb,
   .voice-orb--processing {
@@ -1183,6 +1204,7 @@ p {
   }
 }
 
+/* Conserva bordes y foco cuando Windows aplica colores de alto contraste. */
 @media (forced-colors: active) {
   .home-hero__orb,
   .voice-orb,

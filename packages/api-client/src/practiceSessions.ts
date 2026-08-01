@@ -1,8 +1,12 @@
+/** Contratos TypeScript equivalentes a las respuestas de sesiones de FastAPI. */
+
+/** Turno que se envía al cerrar una conversación. */
 export interface SessionTurnInput {
   speaker: "learner" | "tutor";
   text: string;
 }
 
+/** Entrada completa necesaria para persistir y evaluar una sesión. */
 export interface CompleteSessionInput {
   scenario_id: string;
   mode_id: string;
@@ -17,23 +21,27 @@ export interface CompleteSessionInput {
   turns: SessionTurnInput[];
 }
 
+/** Corrección de lenguaje con explicación pedagógica. */
 export interface FeedbackCorrection {
   original: string;
   improved: string;
   explanation: string;
 }
 
+/** Término contextual acompañado de significado y ejemplo. */
 export interface VocabularyItem {
   term: string;
   meaning_es: string;
   example: string;
 }
 
+/** Observación categorizada que puede alimentar métricas. */
 export interface FeedbackObservation {
   category: string;
   note: string;
 }
 
+/** Revisión que se presenta al finalizar la práctica. */
 export interface SessionFeedback {
   summary: string;
   strength: string;
@@ -44,6 +52,7 @@ export interface SessionFeedback {
   observations: FeedbackObservation[];
 }
 
+/** Sesión completa devuelta después del guardado o al consultar su detalle. */
 export interface PracticeSessionReview extends CompleteSessionInput {
   id: string;
   learner_turn_count: number;
@@ -51,6 +60,7 @@ export interface PracticeSessionReview extends CompleteSessionInput {
   feedback: SessionFeedback;
 }
 
+/** Proyección compacta utilizada por el historial. */
 export interface SessionSummary {
   id: string;
   scenario_id: string;
@@ -66,11 +76,13 @@ export interface SessionSummary {
   vocabulary_count: number;
 }
 
+/** Conteo agrupado por un identificador de modo o área de enfoque. */
 export interface ProgressBreakdown {
   id: string;
   count: number;
 }
 
+/** Métricas agregadas que consume el dashboard de progreso. */
 export interface LearnerProgress {
   total_sessions: number;
   total_minutes: number;

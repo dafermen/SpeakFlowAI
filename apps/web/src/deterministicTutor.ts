@@ -1,5 +1,8 @@
+/** Tutor local reproducible que permite practicar sin red ni proveedor de IA. */
+
 import type { Scenario } from "@speakflow/content-schemas";
 
+/** Turno mínimo que renderiza la conversación determinista. */
 export interface TutorTurn {
   id: number;
   speaker: "learner" | "tutor";
@@ -40,6 +43,12 @@ const replies: Record<string, string[]> = {
   ],
 };
 
+/**
+ * Crea el saludo inicial correspondiente al escenario elegido.
+ *
+ * @param scenario Contenido validado que identifica la situación de práctica.
+ * @returns Primer turno del tutor con ID cero.
+ */
 export function openingFor(scenario: Scenario): TutorTurn {
   return {
     id: 0,
@@ -48,6 +57,12 @@ export function openingFor(scenario: Scenario): TutorTurn {
   };
 }
 
+/**
+ * Selecciona una respuesta predecible según el número de turnos del alumno.
+ *
+ * Las respuestas rotan cuando la conversación supera el guion. Esto mantiene la
+ * demo funcional sin introducir aleatoriedad que vuelva frágiles las pruebas.
+ */
 export function replyFor(
   scenario: Scenario,
   learnerTurnCount: number,

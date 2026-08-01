@@ -1,3 +1,10 @@
+"""Lee y normaliza toda la configuración externa del backend.
+
+Este módulo es la única frontera entre variables de entorno y el resto de la
+aplicación. Así, las demás capas reciben un objeto ``Settings`` tipado y no
+dependen directamente del sistema operativo.
+"""
+
 from __future__ import annotations
 
 import os
@@ -6,6 +13,8 @@ from pathlib import Path
 
 
 def _repository_root() -> Path:
+    """Localiza la raíz del monorepo buscando su archivo de workspace."""
+
     for parent in Path(__file__).resolve().parents:
         if (parent / "pnpm-workspace.yaml").exists():
             return parent
@@ -13,6 +22,12 @@ def _repository_root() -> Path:
 
 
 def _bounded_int(name: str, default: int, minimum: int, maximum: int) -> int:
+    """Lee un entero del entorno y lo limita a un intervalo seguro.
+
+    Un valor ausente o inválido vuelve al predeterminado. Los valores válidos
+    nunca pueden superar ``minimum`` o ``maximum``.
+    """
+
     raw = os.getenv(name)
     if raw is None:
         return default
@@ -24,10 +39,18 @@ def _bounded_int(name: str, default: int, minimum: int, maximum: int) -> int:
 
 
 def _resolve_from_repository(path: Path, repository_root: Path) -> Path:
+    """Convierte una ruta relativa al proyecto en una ruta absoluta estable."""
+
     return (path if path.is_absolute() else repository_root / path).resolve()
 
 
 def _resolve_database_url(raw: str | None, data_dir: Path, repository_root: Path) -> str:
+    """Normaliza URLs SQLite sin modificar conexiones de otros motores.
+
+    Si no existe una URL explícita, crea la URL del archivo de desarrollo dentro
+    de ``data_dir``. ``:memory:`` se conserva porque no representa un archivo.
+    """
+
     if raw is None:
         return f"sqlite:///{(data_dir / 'speakflowai-dev.db').as_posix()}"
     prefix = "sqlite:///"
@@ -42,6 +65,12 @@ def _resolve_database_url(raw: str | None, data_dir: Path, repository_root: Path
 
 @dataclass(frozen=True, slots=True)
 class Settings:
+    """Configuración inmutable que consumen la API y sus adaptadores.
+
+    ``openai_api_key`` se excluye de ``repr`` para evitar filtrarla en registros
+    o mensajes de depuración accidentales.
+    """
+
     environment: str
     data_dir: Path
     database_url: str
@@ -53,6 +82,8 @@ class Settings:
 
 
 def load_settings() -> Settings:
+    """Construye ``Settings`` a partir del entorno con valores locales seguros."""
+
     repository_root = _repository_root()
     data_dir = _resolve_from_repository(
         Path(os.getenv("SPEAKFLOW_DATA_DIR", "data")),

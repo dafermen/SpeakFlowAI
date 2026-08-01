@@ -1,9 +1,17 @@
+/** Construye una revisión local cuando la API no puede guardar una práctica. */
+
 import type {
   CompleteSessionInput,
   PracticeSessionReview,
   SessionFeedback,
 } from "@speakflow/api-client";
 
+/**
+ * Genera feedback pedagógico básico exclusivamente a partir de turnos locales.
+ *
+ * @param input Sesión terminada que todavía no pudo persistirse.
+ * @returns Feedback que permite continuar el flujo sin simular un guardado remoto.
+ */
 export function buildFallbackFeedback(
   input: CompleteSessionInput,
 ): SessionFeedback {
@@ -54,6 +62,12 @@ export function buildFallbackFeedback(
   };
 }
 
+/**
+ * Completa una revisión local con identificador temporal y conteos de turnos.
+ *
+ * El prefijo `local-` permite distinguir esta copia recuperable de una sesión
+ * confirmada por la API.
+ */
 export function buildFallbackReview(
   input: CompleteSessionInput,
 ): PracticeSessionReview {

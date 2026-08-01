@@ -1,3 +1,10 @@
+"""Frontera segura que negocia sesiones WebRTC entre navegador y OpenAI.
+
+El navegador envía una oferta SDP, pero nunca recibe la clave privada. Este
+módulo valida parámetros, aplica límites y construye en el servidor la
+configuración pedagógica que viajará al proveedor.
+"""
+
 from __future__ import annotations
 
 from collections import deque
@@ -60,6 +67,15 @@ SPEED_MAP = {
 
 
 def build_transcription_prompt(scenario_id: str) -> str:
+    """Construye contexto de reconocimiento en inglés para un escenario.
+
+    Args:
+        scenario_id: ID validado que selecciona vocabulario probable.
+
+    Returns:
+        Instrucción que orienta al transcriptor sin incluir datos del alumno.
+    """
+
     vocabulary = SCENARIO_VOCABULARY[scenario_id]
     return (
         "Transcribe only the learner's spoken English. The learner may have a "
@@ -70,15 +86,25 @@ def build_transcription_prompt(scenario_id: str) -> str:
 
 
 class SessionStartLimiter:
+    """Limitador en memoria para evitar reinicios accidentales y coste excesivo.
+
+    Cada proceso mantiene su propia ventana móvil de diez minutos. Es adecuado
+    para el MVP local; un despliegue distribuido necesitaría almacenamiento común.
+    """
+
     def __init__(
         self,
         *,
         now: Callable[[], datetime] = lambda: datetime.now(UTC),
     ) -> None:
+        """Permite inyectar un reloj controlado para pruebas deterministas."""
+
         self._now = now
         self._starts: deque[datetime] = deque()
 
     def allow(self) -> bool:
+        """Registra un inicio permitido y devuelve ``False`` si la ventana está llena."""
+
         now = self._now()
         cutoff = now - timedelta(minutes=10)
         while self._starts and self._starts[0] < cutoff:
@@ -96,6 +122,18 @@ def build_session_config(
     voice_id: str,
     speaking_speed: str,
 ) -> dict[str, Any]:
+    """Crea la configuración Realtime controlada por el backend.
+
+    Args:
+        settings: Modelos y límites cargados desde el entorno del servidor.
+        scenario_id: Escenario previamente comprobado contra la lista permitida.
+        voice_id: Voz pública que se traduce al identificador del proveedor.
+        speaking_speed: Velocidad pública convertida a un factor numérico.
+
+    Returns:
+        Diccionario listo para serializar en la llamada unificada Realtime.
+    """
+
     scenario_instruction = SCENARIO_INSTRUCTIONS[scenario_id]
     return {
         "type": "realtime",
@@ -137,6 +175,12 @@ def create_router(
     *,
     limiter: SessionStartLimiter | None = None,
 ) -> APIRouter:
+    """Construye el endpoint SDP con proveedor y limitador inyectables.
+
+    ``gateway`` puede ser ``None`` cuando no hay clave; en ese caso la ruta
+    devuelve un error controlado y la web ofrece la demo determinista.
+    """
+
     router = APIRouter(prefix="/api/v1/realtime", tags=["realtime"])
     session_limiter = limiter or SessionStartLimiter()
 
@@ -147,6 +191,13 @@ def create_router(
         voice_id: Annotated[str, Query()] = "voice-calm-1",
         speaking_speed: Annotated[str, Query()] = "normal",
     ) -> Response:
+        """Valida una oferta SDP y devuelve la respuesta SDP de OpenAI.
+
+        La función puede responder 4xx por entrada o límites, 5xx controlados por
+        configuración/proveedor y 200 con ``application/sdp`` cuando negocia bien.
+        Ninguna respuesta contiene la clave ni el detalle original del proveedor.
+        """
+
         if gateway is None or settings.openai_api_key is None:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,

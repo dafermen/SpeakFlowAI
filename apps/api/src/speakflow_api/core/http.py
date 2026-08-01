@@ -1,3 +1,5 @@
+"""Protecciones HTTP transversales aplicadas antes de las rutas FastAPI."""
+
 from __future__ import annotations
 
 import logging
@@ -10,21 +12,38 @@ from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 REQUEST_ID_PATTERN = re.compile(r"^[A-Za-z0-9-]{8,64}$")
+# Limita cuerpos genéricos a 256 KiB; la oferta SDP tiene además su propio límite.
 DEFAULT_MAX_BODY_BYTES = 262_144
 
 logger = logging.getLogger("speakflow_api.http")
 
 
 class HttpHardeningMiddleware:
+    """Añade límites, cabeceras seguras, correlación y telemetría a cada solicitud.
+
+    Es un middleware ASGI puro: recibe una aplicación y actúa como envoltorio.
+    No almacena el cuerpo ni información personal; solo registra metadatos de la
+    solicitud y su duración.
+    """
+
     def __init__(
         self,
         app: ASGIApp,
         max_body_bytes: int = DEFAULT_MAX_BODY_BYTES,
     ) -> None:
+        """Configura la aplicación siguiente y el tamaño máximo aceptado."""
+
         self.app = app
         self.max_body_bytes = max_body_bytes
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        """Procesa una interacción ASGI y delega finalmente en FastAPI.
+
+        Las conexiones que no son HTTP pasan sin cambios. En HTTP se valida el
+        tamaño declarado, se normaliza el identificador de solicitud y se
+        intercepta la respuesta para añadir cabeceras de seguridad.
+        """
+
         if scope["type"] != "http":
             await self.app(scope, receive, send)
             return
@@ -53,6 +72,8 @@ class HttpHardeningMiddleware:
         status_code = 500
 
         async def send_with_headers(message: Message) -> None:
+            """Decora el primer mensaje de respuesta y reenvía todos los demás."""
+
             nonlocal status_code
             if message["type"] == "http.response.start":
                 status_code = message["status"]

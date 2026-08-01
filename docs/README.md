@@ -30,6 +30,12 @@
 - [Estrategia de pruebas](TESTING_STRATEGY.md)
 - [Matriz de trazabilidad de Fase 0](TRACEABILITY_MATRIX.md)
 
+## Desarrollo y aprendizaje
+
+- [Preparar el entorno](development/GETTING_STARTED.md)
+- [Estándar de documentación del código](development/CODE_DOCUMENTATION_STANDARD.md)
+- [Recorrido guiado por el código](development/CODE_WALKTHROUGH.md)
+
 ## Gestión
 
 - [Roadmap de fases](phases/ROADMAP.md)

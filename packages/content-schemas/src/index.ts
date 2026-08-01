@@ -1,3 +1,5 @@
+/** Superficie pública de tipos y validadores de contenido. */
+
 export {
   parseScenario,
   type ContentValidationError,

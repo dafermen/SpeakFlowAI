@@ -1,3 +1,5 @@
+/** Superficie pública del paquete de configuración local. */
+
 export {
   DEFAULT_PREFERENCES,
   PREFERENCES_KEY,

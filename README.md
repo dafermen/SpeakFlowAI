@@ -22,17 +22,17 @@ progreso, proyectos móviles y un paquete de publicación.
 
 ## Decisiones principales del MVP
 
-| Tema | Decisión |
-| --- | --- |
-| Base de datos | SQLite mediante SQLAlchemy 2.x y migraciones Alembic |
-| Evolución | Repositorios y tipos portables para facilitar la futura migración a PostgreSQL |
-| Identidad | Un perfil local; sin login, registro, OAuth ni roles |
-| Preferencias | Adaptador LocalStorage tipado, versionado y validado |
-| Contenido | JSON Schema para modos, escenarios y contenido estático |
-| Voz | Integración en una fase posterior, mediada por FastAPI; nunca se expone la clave de OpenAI al navegador |
-| Aplicación web | React, responsive y mobile-first; base preparada para Capacitor |
-| Documentación | Markdown/MDX generado como HTML estático con VitePress |
-| Pruebas | Pruebas enfocadas en cada iteración; puerta completa en endurecimiento previo a producción |
+| Tema           | Decisión                                                                                                |
+| -------------- | ------------------------------------------------------------------------------------------------------- |
+| Base de datos  | SQLite mediante SQLAlchemy 2.x y migraciones Alembic                                                    |
+| Evolución      | Repositorios y tipos portables para facilitar la futura migración a PostgreSQL                          |
+| Identidad      | Un perfil local; sin login, registro, OAuth ni roles                                                    |
+| Preferencias   | Adaptador LocalStorage tipado, versionado y validado                                                    |
+| Contenido      | JSON Schema para modos, escenarios y contenido estático                                                 |
+| Voz            | Integración en una fase posterior, mediada por FastAPI; nunca se expone la clave de OpenAI al navegador |
+| Aplicación web | React, responsive y mobile-first; base preparada para Capacitor                                         |
+| Documentación  | Markdown/MDX generado como HTML estático con VitePress                                                  |
+| Pruebas        | Pruebas enfocadas en cada iteración; puerta completa en endurecimiento previo a producción              |
 
 ## Secuencia obligatoria
 
@@ -75,6 +75,14 @@ Migración local:
 ```
 
 Guía completa: [docs/development/GETTING_STARTED.md](docs/development/GETTING_STARTED.md).
+
+## Aprender con el código
+
+El código de producción incluye docstrings y TSDoc orientados a estudiantes:
+propósito, contratos, entradas, salidas, errores y efectos secundarios. Para
+estudiar el sistema sin leer los archivos al azar, comienza por el
+[recorrido guiado](docs/development/CODE_WALKTHROUGH.md) y consulta el
+[estándar de documentación](docs/development/CODE_DOCUMENTATION_STANDARD.md).
 
 ## Seguridad
 

@@ -1,3 +1,5 @@
+"""Rutas HTTP para leer y actualizar el único perfil local del MVP."""
+
 from __future__ import annotations
 
 from collections.abc import Iterator
@@ -14,10 +16,16 @@ from speakflow_api.infrastructure.repositories.learner_profiles import (
     SqlAlchemyLearnerProfileRepository,
 )
 
+# UUID estable del alumno local; el MVP no dispone de autenticación multiusuario.
 LOCAL_LEARNER_ID = UUID("00000000-0000-4000-8000-000000000001")
 
 
 class LearnerProfilePayload(BaseModel):
+    """Campos editables aceptados por la frontera HTTP.
+
+    Pydantic aplica límites antes de que los datos alcancen el dominio o SQL.
+    """
+
     display_name: str | None = Field(default=None, max_length=80)
     native_language: str = Field(default="es", min_length=2, max_length=10)
     english_level: str = Field(pattern="^(a2|b1|b2|c1|unsure)$")
@@ -29,14 +37,24 @@ class LearnerProfilePayload(BaseModel):
 
 
 class LearnerProfileResponse(LearnerProfilePayload):
+    """Representación pública del perfil con identidad y última actualización."""
+
     id: UUID
     updated_at_utc: datetime
 
 
 def create_router(factory: sessionmaker[Session]) -> APIRouter:
+    """Construye las rutas de perfil usando la fábrica de sesiones recibida.
+
+    Inyectar ``factory`` evita una conexión global rígida y permite sustituir la
+    base por SQLite temporal durante las pruebas.
+    """
+
     router = APIRouter(prefix="/api/v1/learner-profile", tags=["learner-profile"])
 
     def get_session() -> Iterator[Session]:
+        """Entrega una sesión SQLAlchemy a FastAPI y garantiza su cierre."""
+
         session = factory()
         try:
             yield session
@@ -47,6 +65,8 @@ def create_router(factory: sessionmaker[Session]) -> APIRouter:
     def get_profile(
         session: Session = Depends(get_session),  # noqa: B008
     ) -> LearnerProfileResponse | None:
+        """Obtiene el perfil local o ``null`` antes de completar onboarding."""
+
         profile = SqlAlchemyLearnerProfileRepository(session).get(LOCAL_LEARNER_ID)
         if profile is None:
             return None
@@ -65,6 +85,8 @@ def create_router(factory: sessionmaker[Session]) -> APIRouter:
 
     @router.put("", response_model=LearnerProfileResponse)
     def save_profile(payload: LearnerProfilePayload) -> LearnerProfileResponse:
+        """Convierte el payload validado en dominio y lo guarda transaccionalmente."""
+
         now = datetime.now(UTC)
         profile = LearnerProfile(
             id=LOCAL_LEARNER_ID,

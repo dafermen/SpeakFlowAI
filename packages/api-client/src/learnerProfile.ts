@@ -1,3 +1,5 @@
+/** Cliente HTTP tipado que mantiene a React independiente de `fetch` y FastAPI. */
+
 import type {
   CompleteSessionInput,
   LearnerProgress,
@@ -5,6 +7,7 @@ import type {
   SessionSummary,
 } from "./practiceSessions";
 
+/** Datos editables que la API acepta para el perfil local. */
 export interface LearnerProfileInput {
   display_name: string | null;
   native_language: string;
@@ -16,27 +19,42 @@ export interface LearnerProfileInput {
   speaking_speed: "slow" | "normal" | "fast";
 }
 
+/** Perfil confirmado por la API con identidad y fecha de actualización. */
 export interface LearnerProfile extends LearnerProfileInput {
   id: string;
   updated_at_utc: string;
 }
 
+/**
+ * Resultado discriminado de una llamada HTTP.
+ *
+ * Los consumidores comprueban `ok` y no necesitan capturar excepciones de red o JSON.
+ */
 export type ApiResult<T> =
   | { ok: true; value: T }
   | { ok: false; error: "network" | "invalid-response" | "server" };
 
 type Fetcher = typeof fetch;
 
+/** Fachada de las rutas públicas de SpeakFlowAI. */
 export class SpeakFlowApiClient {
+  /**
+   * Crea un cliente configurable y fácil de sustituir en pruebas.
+   *
+   * @param baseUrl Origen del backend, inyectable para pruebas y despliegues.
+   * @param fetcher Implementación de `fetch`; las pruebas proporcionan una controlada.
+   */
   constructor(
     private readonly baseUrl = "http://127.0.0.1:8000",
     private readonly fetcher: Fetcher = fetch,
   ) {}
 
+  /** Lee el perfil local; `value` puede ser `null` antes del onboarding. */
   async getLocalProfile(): Promise<ApiResult<LearnerProfile | null>> {
     return this.request<LearnerProfile | null>("/api/v1/learner-profile");
   }
 
+  /** Valida en el servidor y guarda todos los campos editables del perfil. */
   async saveLocalProfile(
     input: LearnerProfileInput,
   ): Promise<ApiResult<LearnerProfile>> {
@@ -47,6 +65,7 @@ export class SpeakFlowApiClient {
     });
   }
 
+  /** Finaliza una práctica y obtiene la revisión pedagógica persistida. */
   async completeSession(
     input: CompleteSessionInput,
   ): Promise<ApiResult<PracticeSessionReview>> {
@@ -57,6 +76,7 @@ export class SpeakFlowApiClient {
     });
   }
 
+  /** Obtiene una revisión por ID, codificando el segmento para evitar rutas inválidas. */
   async getSession(
     sessionId: string,
   ): Promise<ApiResult<PracticeSessionReview>> {
@@ -65,14 +85,22 @@ export class SpeakFlowApiClient {
     );
   }
 
+  /** Lista resúmenes recientes; el backend vuelve a validar el límite. */
   async listSessions(limit = 20): Promise<ApiResult<SessionSummary[]>> {
     return this.request<SessionSummary[]>(`/api/v1/sessions?limit=${limit}`);
   }
 
+  /** Obtiene métricas agregadas y sesiones recientes para el dashboard. */
   async getProgress(): Promise<ApiResult<LearnerProgress>> {
     return this.request<LearnerProgress>("/api/v1/sessions/progress");
   }
 
+  /**
+   * Ejecuta la operación común y convierte fallos en categorías estables.
+   *
+   * `fetch` se invoca con el receptor global requerido por Chrome. Un estado no
+   * exitoso, JSON inválido y fallo de transporte producen resultados diferentes.
+   */
   private async request<T>(
     path: string,
     init?: RequestInit,

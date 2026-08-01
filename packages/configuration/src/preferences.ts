@@ -1,6 +1,10 @@
+/** Preferencias versionadas y único adaptador autorizado para LocalStorage. */
+
 import { z } from "zod";
 
+/** Clave estable bajo la que se guarda el sobre JSON de preferencias. */
 export const PREFERENCES_KEY = "speakflow.preferences";
+/** Versión vigente del formato persistido; guía las migraciones de lectura. */
 export const PREFERENCES_SCHEMA_VERSION = 3;
 
 const onboardingDraftSchema = z
@@ -56,8 +60,10 @@ const envelopeV3Schema = z
   })
   .strict();
 
+/** Tipo inferido del esquema Zod para evitar duplicar el contrato manualmente. */
 export type Preferences = z.infer<typeof preferencesSchema>;
 
+/** Valores seguros usados en primera ejecución o recuperación de datos corruptos. */
 export const DEFAULT_PREFERENCES: Readonly<Preferences> = Object.freeze({
   interfaceLanguage: "es",
   englishLevel: "unsure",
@@ -73,12 +79,14 @@ export const DEFAULT_PREFERENCES: Readonly<Preferences> = Object.freeze({
   transcriptRetentionEnabled: false,
 });
 
+/** Subconjunto de Storage que permite usar navegador o dobles de prueba. */
 export interface StorageLike {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
   removeItem(key: string): void;
 }
 
+/** Resultado de lectura con recuperación explícita y sin excepciones al consumidor. */
 export type LoadResult =
   | {
       ok: true;
@@ -91,6 +99,7 @@ export type LoadResult =
       value: Preferences;
     };
 
+/** Resultado de escritura que diferencia falta de almacenamiento y datos inválidos. */
 export type SaveResult =
   | { ok: true; value: Preferences }
   | {
@@ -98,15 +107,18 @@ export type SaveResult =
       error: "storage-unavailable" | "unsupported-version" | "write-failed";
     };
 
+/** Resultado de eliminar preferencias locales. */
 export type ClearResult =
   { ok: true } | { ok: false; error: "storage-unavailable" | "write-failed" };
 
 type Clock = () => Date;
 
+/** Crea una copia para impedir que un consumidor modifique el objeto congelado. */
 function copyDefaults(): Preferences {
   return { ...DEFAULT_PREFERENCES };
 }
 
+/** Extrae la versión de un JSON desconocido sin asumir que sea un objeto válido. */
 function readVersion(raw: unknown): number | null {
   if (
     typeof raw === "object" &&
@@ -119,12 +131,25 @@ function readVersion(raw: unknown): number | null {
   return null;
 }
 
+/**
+ * Encapsula lectura, migración, validación y escritura de preferencias.
+ *
+ * Ningún componente React accede directamente a LocalStorage. Todos los fallos
+ * del navegador se transforman en resultados discriminados y recuperables.
+ */
 export class PreferencesStorage {
+  /** Permite inyectar almacenamiento y reloj para pruebas deterministas. */
   constructor(
     private readonly storage: StorageLike | null,
     private readonly now: Clock = () => new Date(),
   ) {}
 
+  /**
+   * Lee el sobre persistido y migra versiones 1 y 2 al contrato actual.
+   *
+   * Datos ausentes o corruptos recuperan los predeterminados; una versión futura
+   * se rechaza para no sobrescribir información que este cliente no comprende.
+   */
   load(): LoadResult {
     if (!this.storage) {
       return {
@@ -189,6 +214,7 @@ export class PreferencesStorage {
     }
   }
 
+  /** Valida y serializa preferencias actuales con versión y fecha de actualización. */
   save(value: Preferences): SaveResult {
     if (!this.storage) {
       return { ok: false, error: "storage-unavailable" };
@@ -214,6 +240,7 @@ export class PreferencesStorage {
     }
   }
 
+  /** Combina cambios parciales con el valor cargado y guarda el resultado completo. */
   patch(changes: Partial<Preferences>): SaveResult {
     const current = this.load();
     if (!current.ok) {
@@ -222,6 +249,7 @@ export class PreferencesStorage {
     return this.save({ ...current.value, ...changes });
   }
 
+  /** Elimina el sobre local sin propagar excepciones del navegador. */
   clear(): ClearResult {
     if (!this.storage) {
       return { ok: false, error: "storage-unavailable" };
@@ -235,6 +263,7 @@ export class PreferencesStorage {
   }
 }
 
+/** Crea el adaptador del navegador o uno inactivo durante renderizado sin `window`. */
 export function createBrowserPreferencesStorage(): PreferencesStorage {
   const storage = typeof window === "undefined" ? null : window.localStorage;
   return new PreferencesStorage(storage);

@@ -1,3 +1,11 @@
+/*
+ * Tokens globales del sistema de diseño.
+ *
+ * Prefijo `--sf-`: `color` describe intención semántica, `space` usa una escala
+ * consistente y `motion` centraliza duración/easing. Los componentes consumen
+ * tokens y nunca repiten valores de marca sin una razón local.
+ */
+
 :root {
   color-scheme: light dark;
 
@@ -60,6 +68,7 @@
   --sf-z-toast: 50;
 }
 
+/* Tema oscuro elegido explícitamente desde preferencias. */
 [data-theme="dark"] {
   --sf-color-surface-canvas: #0b1320;
   --sf-color-surface-raised: #142033;
@@ -79,6 +88,7 @@
   --sf-shadow-md: none;
 }
 
+/* Tema oscuro del sistema solo cuando el alumno no forzó el tema claro. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --sf-color-surface-canvas: #0b1320;
@@ -100,6 +110,7 @@
   }
 }
 
+/* Reduce animaciones globalmente manteniendo transiciones técnicamente válidas. */
 @media (prefers-reduced-motion: reduce) {
   :root {
     --sf-motion-instant: 1ms;

@@ -24,7 +24,11 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T04 está completada.**
+**Ninguna. M1-T07 está completada.**
+
+El código de producción está documentado para lectura educativa: backend,
+contratos compartidos, adaptadores, React, WebRTC y estilos. El recorrido guiado
+conecta interfaz, API, dominio y persistencia mediante mapas y flujos concretos.
 
 La transcripción visible prioriza ahora el inglés con `gpt-4o-transcribe`,
 contexto por escenario, reducción de ruido de campo lejano y VAD ajustado. La
@@ -51,6 +55,34 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T05 del 2026-08-01:
+
+- Estándar educativo creado y enlazado desde la navegación documental.
+- 25 módulos Python cubiertos en dominio, aplicación, API e infraestructura.
+- Funciones importantes: propósito, entradas, salidas, errores y efectos documentados.
+- Ruff, formato, mypy y las 22 pruebas backend: aprobados.
+- No se modificó comportamiento de producción ni esquema de base de datos.
+
+Mantenimiento M1-T06 del 2026-08-01:
+
+- TSDoc añadido al cliente HTTP, preferencias, esquemas JSON y sistema de diseño.
+- Servicios web documentados: catálogo, tutor local, fallback y WebRTC Realtime.
+- Contratos, parámetros, resultados, recuperaciones y efectos del navegador explicados.
+- Paquetes: 17 pruebas; web enfocada: 10 pruebas; formato, lint y tipos aprobados.
+- No se modificaron protocolos, almacenamiento ni comportamiento visible.
+
+Mantenimiento M1-T07 del 2026-08-01:
+
+- `App.tsx`: componentes, estados, callbacks, persistencia y recuperación explicados.
+- CSS: tokens, composición responsive y accesibilidad organizados por secciones.
+- Recorrido educativo y estándar enlazados desde README, índice y navegación VitePress.
+- Backend: 98 clases/funciones y 0 docstrings ausentes según auditoría AST.
+- TypeScript de producción: 149 bloques TSDoc en 20 archivos auditados.
+- Guías nuevas: 227 líneas entre estándar y recorrido de aprendizaje.
+- Backend: 22 pruebas; web: 15 pruebas; paquetes: 17 pruebas aprobadas.
+- Formato, Ruff, ESLint, mypy, tipos, builds, bundle y VitePress: aprobados.
+- Los cambios son documentales; no alteran comportamiento, datos ni protocolos.
 
 Mantenimiento M1-T01 del 2026-07-31:
 

@@ -1,3 +1,5 @@
+"""Rutas HTTP para cerrar prácticas, consultar historial y calcular progreso."""
+
 from __future__ import annotations
 
 from collections import Counter
@@ -22,11 +24,19 @@ from speakflow_api.infrastructure.repositories.practice_sessions import (
 
 
 class SessionTurnPayload(BaseModel):
+    """Turno de conversación aceptado o devuelto por la API."""
+
     speaker: str = Field(pattern="^(learner|tutor)$")
     text: str = Field(min_length=1, max_length=2000)
 
 
 class CompleteSessionPayload(BaseModel):
+    """Entrada completa necesaria para finalizar y evaluar una práctica.
+
+    Los límites protegen almacenamiento y coste. ``retain_transcript`` controla
+    explícitamente si se permite persistir el texto de los turnos.
+    """
+
     scenario_id: str = Field(min_length=1, max_length=120)
     mode_id: str = Field(min_length=1, max_length=120)
     provider: str = Field(pattern="^(deterministic|openai-realtime)$")
@@ -41,29 +51,39 @@ class CompleteSessionPayload(BaseModel):
 
     @model_validator(mode="after")
     def validate_timestamps(self) -> CompleteSessionPayload:
+        """Rechaza intervalos negativos antes de ejecutar el caso de uso."""
+
         if self.ended_at_utc < self.started_at_utc:
             raise ValueError("ended_at_utc must not precede started_at_utc")
         return self
 
 
 class FeedbackCorrectionResponse(BaseModel):
+    """Corrección pedagógica serializable para el frontend."""
+
     original: str
     improved: str
     explanation: str
 
 
 class VocabularyItemResponse(BaseModel):
+    """Elemento de vocabulario contextual expuesto en la revisión."""
+
     term: str
     meaning_es: str
     example: str
 
 
 class FeedbackObservationResponse(BaseModel):
+    """Observación etiquetada que puede mostrarse o agregarse como métrica."""
+
     category: str
     note: str
 
 
 class SessionFeedbackResponse(BaseModel):
+    """Contrato HTTP de la revisión pedagógica completa."""
+
     summary: str
     strength: str
     focus_area: str
@@ -74,6 +94,8 @@ class SessionFeedbackResponse(BaseModel):
 
 
 class PracticeSessionResponse(BaseModel):
+    """Detalle público de una sesión y su feedback asociado."""
+
     id: UUID
     scenario_id: str
     mode_id: str
@@ -92,6 +114,8 @@ class PracticeSessionResponse(BaseModel):
 
 
 class SessionSummaryResponse(BaseModel):
+    """Versión compacta para listas, sin cargar todas las relaciones."""
+
     id: UUID
     scenario_id: str
     mode_id: str
@@ -107,11 +131,15 @@ class SessionSummaryResponse(BaseModel):
 
 
 class ProgressBreakdownResponse(BaseModel):
+    """Par identificador/conteo usado por distribuciones del dashboard."""
+
     id: str
     count: int
 
 
 class ProgressResponse(BaseModel):
+    """Métricas agregadas y sesiones recientes del alumno local."""
+
     total_sessions: int
     total_minutes: int
     learner_turns: int
@@ -122,6 +150,8 @@ class ProgressResponse(BaseModel):
 
 
 def _feedback_response(feedback: SessionFeedback) -> SessionFeedbackResponse:
+    """Traduce feedback del dominio a listas serializables por Pydantic."""
+
     return SessionFeedbackResponse(
         summary=feedback.summary,
         strength=feedback.strength,
@@ -151,6 +181,8 @@ def _feedback_response(feedback: SessionFeedback) -> SessionFeedbackResponse:
 
 
 def _response(practice: PracticeSession) -> PracticeSessionResponse:
+    """Traduce una sesión del dominio al contrato HTTP detallado."""
+
     return PracticeSessionResponse(
         id=practice.id,
         scenario_id=practice.scenario_id,
@@ -171,6 +203,12 @@ def _response(practice: PracticeSession) -> PracticeSessionResponse:
 
 
 def _ensure_local_learner(session: Session, difficulty: str) -> None:
+    """Crea el alumno local mínimo si una sesión llega antes del onboarding.
+
+    La inserción comparte la transacción de la práctica, de modo que ambas
+    operaciones se confirman o revierten juntas.
+    """
+
     repository = SqlAlchemyLearnerProfileRepository(session)
     if repository.get(LOCAL_LEARNER_ID) is not None:
         return
@@ -190,6 +228,8 @@ def _ensure_local_learner(session: Session, difficulty: str) -> None:
 
 
 def _summary(practice: PracticeSession) -> SessionSummaryResponse:
+    """Proyecta una sesión completa en el resumen usado por historial."""
+
     return SessionSummaryResponse(
         id=practice.id,
         scenario_id=practice.scenario_id,
@@ -207,6 +247,12 @@ def _summary(practice: PracticeSession) -> SessionSummaryResponse:
 
 
 def _current_streak(practices: tuple[PracticeSession, ...]) -> int:
+    """Calcula días consecutivos de práctica hasta hoy o ayer.
+
+    Varias sesiones del mismo día cuentan una sola vez. Una racha terminada
+    antes de ayer devuelve cero porque ya no está vigente.
+    """
+
     days = sorted({item.ended_at_utc.date() for item in practices}, reverse=True)
     if not days:
         return 0
@@ -222,10 +268,14 @@ def _current_streak(practices: tuple[PracticeSession, ...]) -> int:
 
 
 def create_router(factory: sessionmaker[Session]) -> APIRouter:
+    """Construye endpoints de sesiones enlazados a una fábrica inyectable."""
+
     router = APIRouter(prefix="/api/v1/sessions", tags=["practice-sessions"])
 
     @router.post("", response_model=PracticeSessionResponse, status_code=201)
     def complete_session(payload: CompleteSessionPayload) -> PracticeSessionResponse:
+        """Finaliza, evalúa y persiste una práctica como una sola transacción."""
+
         turns = tuple(
             SessionTurn(item.speaker, item.text.strip(), index)
             for index, item in enumerate(payload.turns)
@@ -258,6 +308,8 @@ def create_router(factory: sessionmaker[Session]) -> APIRouter:
     def list_sessions(
         limit: int = Query(default=20, ge=1, le=50),
     ) -> list[SessionSummaryResponse]:
+        """Lista resúmenes recientes con un límite validado entre 1 y 50."""
+
         with transactional_session(factory) as session:
             practices = SqlAlchemyPracticeSessionRepository(session).list_recent(
                 LOCAL_LEARNER_ID, limit
@@ -266,6 +318,8 @@ def create_router(factory: sessionmaker[Session]) -> APIRouter:
 
     @router.get("/progress", response_model=ProgressResponse)
     def get_progress() -> ProgressResponse:
+        """Agrega hasta 500 sesiones para construir el dashboard local."""
+
         with transactional_session(factory) as session:
             practices = SqlAlchemyPracticeSessionRepository(session).list_recent(
                 LOCAL_LEARNER_ID, 500
@@ -290,6 +344,8 @@ def create_router(factory: sessionmaker[Session]) -> APIRouter:
 
     @router.get("/{session_id}", response_model=PracticeSessionResponse)
     def get_session(session_id: UUID) -> PracticeSessionResponse:
+        """Obtiene el detalle de una sesión o responde HTTP 404 si no existe."""
+
         with transactional_session(factory) as session:
             practice = SqlAlchemyPracticeSessionRepository(session).get(session_id)
             if practice is None:

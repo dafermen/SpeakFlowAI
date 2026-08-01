@@ -1,3 +1,5 @@
+/** Punto de entrada público del paquete; evita importar archivos internos directamente. */
+
 export {
   SpeakFlowApiClient,
   type ApiResult,
