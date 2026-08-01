@@ -13,6 +13,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any
 
 from fastapi import APIRouter, HTTPException, Query, Request, Response, status
+from pydantic import BaseModel
 
 from speakflow_api.application.ports.realtime import (
     RealtimeGateway,
@@ -64,6 +65,12 @@ SPEED_MAP = {
     "normal": 1.0,
     "fast": 1.15,
 }
+
+
+class RealtimeReadinessResponse(BaseModel):
+    """Disponibilidad pública del servicio sin revelar credenciales."""
+
+    available: bool
 
 
 def build_transcription_prompt(scenario_id: str) -> str:
@@ -183,6 +190,14 @@ def create_router(
 
     router = APIRouter(prefix="/api/v1/realtime", tags=["realtime"])
     session_limiter = limiter or SessionStartLimiter()
+
+    @router.get("/readiness", response_model=RealtimeReadinessResponse)
+    def readiness() -> RealtimeReadinessResponse:
+        """Indica si el backend puede iniciar voz sin contactar al proveedor."""
+
+        return RealtimeReadinessResponse(
+            available=gateway is not None and settings.openai_api_key is not None,
+        )
 
     @router.post("/session", response_class=Response)
     async def create_session(

@@ -147,6 +147,21 @@ El orbe representa actividad, no volumen exacto, calidad de pronunciación ni an
 
 El botón de micrófono combina icono, etiqueta y estado accesible. Silenciado nunca comparte color, texto o animación con “Te escucho”.
 
+### Lectura continua de la conversación
+
+- El turno más reciente permanece visible en la parte inferior.
+- Cada turno nuevo desplaza la conversación automáticamente mientras la persona
+  sigue leyendo el final.
+- Si la persona sube para consultar un turno anterior, el desplazamiento se
+  suspende y aparece “Volver al final”.
+- Una transcripción incorrecta se puede excluir de la revisión sin ocultarla ni
+  alterar otros turnos.
+- La barra de desplazamiento es discreta, pero conserva teclado, rueda y gestos.
+
+Antes de solicitar el micrófono se comprueban navegador, red, API y disponibilidad
+del servicio de voz. La pantalla principal usa lenguaje humano; WebRTC, tokens y
+otros diagnósticos permanecen dentro de “Detalles técnicos”.
+
 ## Revisión de sesión
 
 ### Orden
@@ -162,6 +177,7 @@ El botón de micrófono combina icono, etiqueta y estado accesible. Silenciado n
 
 - Repetir escenario.
 - Practicar recomendación.
+- Escuchar o copiar frases mejoradas cuando el navegador lo permita.
 - Ver transcripción, solo si se guardó.
 - Volver a Home.
 

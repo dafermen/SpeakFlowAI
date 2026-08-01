@@ -9,6 +9,7 @@ import { Badge, Button, Card } from "@speakflow/design-system";
 import { Check, RefreshCw, Sparkles, TrendingUp, WifiOff } from "lucide-react";
 
 import { findScenario, modes, translate } from "./catalog";
+import { LearningPhraseList } from "./LearningPhraseList";
 import { SummaryItem } from "./sharedComponents";
 
 /**
@@ -57,7 +58,9 @@ export function ProgressDashboard({
         <TrendingUp aria-hidden="true" size={36} />
         <p className="eyebrow">Tu progreso</p>
         <h1>Tu primera conversación abrirá este espacio.</h1>
-        <p>Aquí verás minutos, intervenciones, racha y áreas de enfoque.</p>
+        <p>
+          Aquí verás minutos, intervenciones, constancia y áreas de enfoque.
+        </p>
         <Button onClick={onPractice} size="large">
           Iniciar práctica
         </Button>
@@ -96,7 +99,7 @@ export function ProgressDashboard({
         </Card>
         <Card>
           <strong>{progress.current_streak_days}</strong>
-          <span>días de racha</span>
+          <span>días de constancia</span>
         </Card>
       </div>
 
@@ -183,12 +186,16 @@ export function ProgressDashboard({
 export function SessionReview({
   loading,
   onHome,
+  onNext,
+  onRepeat,
   onRetry,
   review,
   saved,
 }: {
   loading: boolean;
   onHome: () => void;
+  onNext: () => void;
+  onRepeat: () => void;
   onRetry: () => void;
   review: PracticeSessionReview | null;
   saved: boolean;
@@ -287,11 +294,7 @@ export function SessionReview({
         </Card>
         <Card className="review__section">
           <h2>Frases para reutilizar</h2>
-          <ul className="review__phrases">
-            {review.feedback.improved_phrases.map((phrase) => (
-              <li key={phrase}>{phrase}</li>
-            ))}
-          </ul>
+          <LearningPhraseList phrases={review.feedback.improved_phrases} />
         </Card>
       </div>
 
@@ -301,9 +304,17 @@ export function SessionReview({
             ? "La transcripción se guardó porque activaste esa preferencia."
             : "Guardamos resultados y feedback, no la transcripción cruda."}
         </p>
-        <Button onClick={onHome} size="large">
-          Volver al inicio
-        </Button>
+        <div className="review__action-buttons">
+          <Button onClick={onNext} size="large">
+            Practicar siguiente escenario
+          </Button>
+          <Button onClick={onRepeat} variant="secondary">
+            Repetir este escenario
+          </Button>
+          <Button onClick={onHome} variant="ghost">
+            Volver al inicio
+          </Button>
+        </div>
       </footer>
     </section>
   );

@@ -98,6 +98,20 @@ def test_transcription_prompt_uses_scenario_vocabulary() -> None:
     assert "cappuccino" not in prompt
 
 
+def test_realtime_readiness_reports_configuration_without_secret(tmp_path: Path) -> None:
+    gateway = FakeRealtimeGateway()
+    with _client(_settings(tmp_path), gateway) as client:
+        configured = client.get("/api/v1/realtime/readiness")
+    with _client(_settings(tmp_path, configured=False), None) as client:
+        unavailable = client.get("/api/v1/realtime/readiness")
+
+    assert configured.status_code == 200
+    assert configured.json() == {"available": True}
+    assert unavailable.status_code == 200
+    assert unavailable.json() == {"available": False}
+    assert "key" not in configured.text.lower()
+
+
 def test_realtime_returns_controlled_errors_without_leaking_secrets(tmp_path: Path) -> None:
     with _client(_settings(tmp_path, configured=False), None) as client:
         response = client.post(

@@ -115,16 +115,19 @@ La interfaz está dividida por responsabilidad. Empieza por `appTypes.ts`, conti
 por una pantalla pequeña y deja `App.tsx` para el final: así primero conoces las
 piezas y después ves cómo se coordinan.
 
-| Archivo                    | Símbolos principales                       | Responsabilidad educativa                           |
-| -------------------------- | ------------------------------------------ | --------------------------------------------------- |
-| `appTypes.ts`              | `View`, `SessionSetup`, `CompletedSession` | Contratos que conectan módulos sin detalles de UI   |
-| `sharedComponents.tsx`     | `ProductNavigation`, `SummaryItem`         | Componentes pequeños reutilizados entre pantallas   |
-| `Onboarding.tsx`           | `Onboarding`, pasos y selectores           | Creación reanudable del perfil local                |
-| `ProductPages.tsx`         | `Home`, `Catalog`, `Setup`                 | Descubrimiento y preparación de una práctica        |
-| `RealtimeTutorSession.tsx` | `RealtimeTutorSession`                     | Ciclo de vida WebRTC, audio y recuperación          |
-| `TutorSession.tsx`         | `TutorSession`                             | Alternativa determinista sin voz ni red             |
-| `ReviewPages.tsx`          | revisión, progreso y preferencias          | Resultados persistidos y configuración              |
-| `App.tsx`                  | `App` y callbacks transversales            | Composición, navegación y coordinación de servicios |
+| Archivo                      | Símbolos principales                       | Responsabilidad educativa                           |
+| ---------------------------- | ------------------------------------------ | --------------------------------------------------- |
+| `appTypes.ts`                | `View`, `SessionSetup`, `CompletedSession` | Contratos que conectan módulos sin detalles de UI   |
+| `sharedComponents.tsx`       | `ProductNavigation`, `SummaryItem`         | Componentes pequeños reutilizados entre pantallas   |
+| `ConversationTranscript.tsx` | `ConversationTranscript`                   | Lectura anclada sin interrumpir a quien sube        |
+| `VoiceReadiness.tsx`         | `checkVoiceReadiness`, `VoiceReadiness`    | Diagnóstico previo sin abrir el micrófono           |
+| `LearningPhraseList.tsx`     | `LearningPhraseList`                       | Copia y pronunciación local de frases útiles        |
+| `Onboarding.tsx`             | `Onboarding`, pasos y selectores           | Creación reanudable del perfil local                |
+| `ProductPages.tsx`           | `Home`, `Catalog`, `Setup`                 | Descubrimiento y preparación de una práctica        |
+| `RealtimeTutorSession.tsx`   | `RealtimeTutorSession`                     | Ciclo de vida WebRTC, audio y recuperación          |
+| `TutorSession.tsx`           | `TutorSession`                             | Alternativa determinista sin voz ni red             |
+| `ReviewPages.tsx`            | revisión, progreso y preferencias          | Resultados persistidos y configuración              |
+| `App.tsx`                    | `App` y callbacks transversales            | Composición, navegación y coordinación de servicios |
 
 Cada archivo comienza explicando su frontera y las funciones importantes conservan
 su propósito, entradas, salidas y efectos. Ningún módulo de pantalla supera las

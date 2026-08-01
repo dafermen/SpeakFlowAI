@@ -41,7 +41,11 @@ export function ProductNavigation({
       destination: "catalog" as const,
     },
     { label: "Progreso", icon: TrendingUp, destination: "progress" as const },
-    { label: "Más", icon: CircleUserRound, destination: "settings" as const },
+    {
+      label: "Configuración",
+      icon: CircleUserRound,
+      destination: "settings" as const,
+    },
   ];
   return (
     <nav aria-label="Navegación principal" className="product-navigation">

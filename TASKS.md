@@ -139,3 +139,4 @@ Una sola tarea puede estar `IN_PROGRESS`. La siguiente se desbloquea cuando la a
 |     6 | M1-T06 | Documentar paquetes TypeScript y servicios del frontend                  | DONE   |
 |     7 | M1-T07 | Documentar la interfaz React y crear el recorrido guiado del código      | DONE   |
 |     8 | M1-T08 | Dividir el frontend monolítico en módulos educativos por responsabilidad | DONE   |
+|     9 | M1-T09 | Mejorar lectura, preparación, aprendizaje y continuidad del recorrido UX | DONE   |

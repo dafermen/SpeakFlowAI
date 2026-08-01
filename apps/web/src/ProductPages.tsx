@@ -2,6 +2,7 @@
 
 import type { LearnerProgress } from "@speakflow/api-client";
 import type { Preferences } from "@speakflow/configuration";
+import type { Scenario } from "@speakflow/content-schemas";
 import { Badge, Button, Card } from "@speakflow/design-system";
 import {
   ArrowLeft,
@@ -23,17 +24,66 @@ import {
 } from "./catalog";
 import { SummaryItem } from "./sharedComponents";
 
+export type PracticeRecommendation = {
+  reason: string;
+  scenario: Scenario;
+};
+
+/** Elige una práctica usando historial local y la última intención conocida. */
+export function recommendPractice(
+  preferences: Preferences,
+  progress: LearnerProgress | null,
+): PracticeRecommendation {
+  if (progress?.total_sessions) {
+    const counts = new Map(
+      progress.sessions_by_mode.map((item) => [item.id, item.count]),
+    );
+    const leastPracticedMode = modes.reduce((best, candidate) =>
+      (counts.get(candidate.id) ?? 0) < (counts.get(best.id) ?? 0)
+        ? candidate
+        : best,
+    );
+    const scenario =
+      scenarios.find((item) => item.modeId === leastPracticedMode.id) ??
+      scenarios[0]!;
+    return {
+      scenario,
+      reason: `Te ayuda a equilibrar tu práctica de ${translate(leastPracticedMode.titleKey).toLowerCase()}.`,
+    };
+  }
+
+  const previousChoice = preferences.lastScenarioId
+    ? scenarios.find((item) => item.id === preferences.lastScenarioId)
+    : undefined;
+  if (previousChoice) {
+    return {
+      scenario: previousChoice,
+      reason: "Retoma la práctica que ya habías elegido.",
+    };
+  }
+
+  return {
+    scenario: scenarios[0]!,
+    reason: "Una situación cotidiana y breve para comenzar con confianza.",
+  };
+}
+
 /** Inicio personalizado con práctica recomendada y resumen de progreso. */
 export function Home({
   displayName,
+  onBrowse,
   onStart,
+  preferences,
   progress,
 }: {
   displayName: string;
-  onStart: () => void;
+  onBrowse: () => void;
+  onStart: (scenarioId: string) => void;
+  preferences: Preferences;
   progress: LearnerProgress | null;
 }) {
-  const recommended = scenarios[0]!;
+  const recommendation = recommendPractice(preferences, progress);
+  const recommended = recommendation.scenario;
   return (
     <div className="page-stack">
       <section className="home-hero">
@@ -47,10 +97,15 @@ export function Home({
             Una práctica corta y enfocada vale más que esperar el momento
             perfecto.
           </p>
-          <Button onClick={onStart} size="large">
-            <Mic aria-hidden="true" size={20} />
-            Iniciar práctica
-          </Button>
+          <div className="home-hero__actions">
+            <Button onClick={() => onStart(recommended.id)} size="large">
+              <Mic aria-hidden="true" size={20} />
+              Iniciar práctica
+            </Button>
+            <Button onClick={onBrowse} variant="ghost">
+              Ver todas las prácticas
+            </Button>
+          </div>
         </div>
         <div className="home-hero__orb" aria-hidden="true">
           <Waves size={56} strokeWidth={1.5} />
@@ -69,8 +124,9 @@ export function Home({
           <div>
             <h3>Objetivo de hoy</h3>
             <p>{translate(recommended.objectiveKey)}</p>
+            <small>{recommendation.reason}</small>
           </div>
-          <Button onClick={onStart} variant="secondary">
+          <Button onClick={() => onStart(recommended.id)} variant="secondary">
             Preparar sesión
             <ChevronRight aria-hidden="true" size={18} />
           </Button>
@@ -239,7 +295,7 @@ export function Setup({
             }
             variant="secondary"
           >
-            Usar demo local
+            Practicar escribiendo
           </Button>
         </div>
       </Card>

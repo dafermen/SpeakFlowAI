@@ -92,6 +92,17 @@ export function App({
     }
   };
 
+  /** Abre la preparación del escenario y recuerda la elección localmente. */
+  const prepareScenario = (scenarioId: string) => {
+    const scenario = findScenario(scenarioId);
+    setSelectedScenarioId(scenario.id);
+    updatePreferences({
+      lastModeId: scenario.modeId,
+      lastScenarioId: scenario.id,
+    });
+    setView("setup");
+  };
+
   /** Guarda una sesión o crea una revisión local recuperable si falla la API. */
   const persistSession = useCallback(
     async (input: CompleteSessionInput) => {
@@ -302,20 +313,15 @@ export function App({
           {view === "home" && (
             <Home
               displayName={displayName}
-              onStart={() => setView("catalog")}
+              onBrowse={() => setView("catalog")}
+              onStart={prepareScenario}
+              preferences={preferences}
               progress={progress}
             />
           )}
           {view === "catalog" && (
             <Catalog
-              onSelect={(modeId, scenarioId) => {
-                setSelectedScenarioId(scenarioId);
-                updatePreferences({
-                  lastModeId: modeId,
-                  lastScenarioId: scenarioId,
-                });
-                setView("setup");
-              }}
+              onSelect={(_modeId, scenarioId) => prepareScenario(scenarioId)}
             />
           )}
           {view === "setup" && (
@@ -350,6 +356,15 @@ export function App({
             <SessionReview
               loading={reviewLoading}
               onHome={() => setView("home")}
+              onNext={() => {
+                const currentIndex = scenarios.findIndex(
+                  (item) => item.id === review?.scenario_id,
+                );
+                const nextIndex =
+                  currentIndex < 0 ? 0 : (currentIndex + 1) % scenarios.length;
+                prepareScenario(scenarios[nextIndex]!.id);
+              }}
+              onRepeat={() => review && prepareScenario(review.scenario_id)}
               onRetry={() =>
                 pendingSession && void persistSession(pendingSession)
               }

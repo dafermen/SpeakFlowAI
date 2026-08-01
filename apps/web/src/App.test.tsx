@@ -143,12 +143,11 @@ describe("local learner experience", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Iniciar práctica" }));
     expect(
-      screen.getByRole("heading", { name: "Elige cómo quieres practicar." }),
+      screen.getByRole("heading", { name: "Pedir en una cafetería" }),
     ).toBeVisible();
     fireEvent.click(
-      screen.getAllByRole("button", { name: "Elegir práctica" })[0]!,
+      screen.getByRole("button", { name: "Practicar escribiendo" }),
     );
-    fireEvent.click(screen.getByRole("button", { name: "Usar demo local" }));
 
     expect(
       screen.getByText("Hi! Welcome in. What would you like to order today?"),
@@ -178,22 +177,39 @@ describe("local learner experience", () => {
     );
   });
 
-  it("offers a user-gesture gate before requesting realtime microphone access", () => {
+  it("checks readiness before requesting realtime microphone access", async () => {
+    const originalMediaDevices = navigator.mediaDevices;
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: { getUserMedia: vi.fn() },
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(JSON.stringify({ available: true }), { status: 200 }),
+        ),
+    );
+
     render(<App apiClient={successfulApi} storage={createStorage(true)} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Iniciar práctica" }));
-    fireEvent.click(
-      screen.getAllByRole("button", { name: "Elegir práctica" })[0]!,
-    );
     fireEvent.click(screen.getByRole("button", { name: "Comenzar con voz" }));
 
     expect(
       screen.getByRole("heading", { name: "Pedir en una cafetería" }),
     ).toBeVisible();
     expect(
-      screen.getByRole("button", { name: "Activar micrófono" }),
+      await screen.findByRole("button", { name: "Activar micrófono" }),
     ).toBeVisible();
-    expect(screen.getByText(/la clave de OpenAI permanece/)).toBeVisible();
+    expect(screen.getByText(/te pedirá permiso/)).toBeVisible();
+
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: originalMediaDevices,
+    });
+    vi.unstubAllGlobals();
   });
 
   it("opens the progress empty state from primary navigation", async () => {
@@ -222,14 +238,16 @@ describe("local learner experience", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Iniciar práctica" }));
     fireEvent.click(
-      screen.getAllByRole("button", { name: "Elegir práctica" })[0]!,
+      screen.getByRole("button", { name: "Practicar escribiendo" }),
     );
-    fireEvent.click(screen.getByRole("button", { name: "Usar demo local" }));
     fireEvent.click(screen.getByRole("button", { name: "Terminar" }));
 
     await waitFor(() => expect(screen.getByText("Copia local")).toBeVisible());
     expect(
       screen.getByRole("button", { name: "Reintentar guardado" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Repetir este escenario" }),
     ).toBeVisible();
   });
 });

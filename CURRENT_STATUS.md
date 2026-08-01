@@ -24,11 +24,11 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T08 quedó completada.**
+**Ninguna. M1-T09 quedó completada.**
 
-El frontend separa contratos, onboarding, páginas de producto, sesiones de
-práctica y revisión. `App.tsx` conserva únicamente la composición y los flujos
-transversales; las pruebas de integración confirmaron el comportamiento previo.
+La conversación permanece anclada al turno reciente sin impedir leer hacia
+arriba. El recorrido incorpora diagnóstico previo de voz, lenguaje humano,
+recomendaciones personalizadas y acciones de continuidad tras cada práctica.
 
 El código de producción está documentado para lectura educativa: backend,
 contratos compartidos, adaptadores, React, WebRTC y estilos. El recorrido guiado
@@ -59,6 +59,19 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T09 del 2026-08-01:
+
+- Chat anclado al final, seguimiento automático respetuoso y botón “Volver al final”.
+- Barra de desplazamiento discreta y comportamiento compartido por voz y práctica escrita.
+- Diagnóstico previo de navegador, red, API y disponibilidad de voz sin abrir el micrófono.
+- Estados humanos; WebRTC y tokens trasladados a “Detalles técnicos”.
+- Inicio recomendado según historial y última elección, con acceso directo a preparación.
+- Revisión con siguiente escenario, repetición, copia y pronunciación local de frases.
+- Transcripciones incorrectas excluibles de la revisión y progreso expresado como constancia.
+- Frontend: formato, ESLint, tipos, 23 pruebas, build y presupuesto de bundle aprobados.
+- Backend: formato, Ruff, mypy y 23 pruebas aprobados.
+- API de disponibilidad segura activa; aplicación `4173` y API `8000` operativas.
 
 Mantenimiento M1-T08 del 2026-08-01:
 

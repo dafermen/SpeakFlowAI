@@ -7,7 +7,6 @@ import { Badge, Button } from "@speakflow/design-system";
 import {
   Captions,
   Gauge,
-  Mic,
   Pause,
   Play,
   RefreshCw,
@@ -26,23 +25,25 @@ import {
   type SessionSetup,
 } from "./appTypes";
 import { findScenario, translate } from "./catalog";
+import { ConversationTranscript } from "./ConversationTranscript";
 import {
   WebRtcRealtimeClient,
   type VoiceConnectionState,
   type VoiceTranscript,
   type VoiceUsage,
 } from "./realtimeClient";
+import { VoiceReadiness } from "./VoiceReadiness";
 
 /** Etiquetas visibles de la máquina de estados WebRTC. */
 const stateLabels: Record<VoiceConnectionState, string> = {
-  idle: "Lista",
-  "requesting-permission": "Solicitando micrófono",
-  connecting: "Conectando",
-  listening: "Escuchando",
-  processing: "Pensando",
-  speaking: "Hablando",
-  paused: "En pausa",
-  reconnecting: "Reconectando",
+  idle: "Listo para empezar",
+  "requesting-permission": "Permite el micrófono",
+  connecting: "Preparando la conversación",
+  listening: "Te escucho",
+  processing: "Preparando respuesta",
+  speaking: "Tu tutor está hablando",
+  paused: "Conversación en pausa",
+  reconnecting: "Recuperando conexión",
   ended: "Finalizada",
   error: "Conexión interrumpida",
 };
@@ -60,7 +61,7 @@ const voiceErrorMessages: Record<string, string> = {
   microphone_unsupported:
     "Este navegador no permite capturar el micrófono en esta página. Usa Chrome actualizado y revisa los permisos del sitio.",
   not_configured:
-    "La voz todavía no tiene una credencial configurada en la API local.",
+    "El servicio de voz todavía no está configurado. Puedes continuar con la práctica escrita.",
   session_limit:
     "Alcanzaste el límite temporal de inicios de sesión. Espera unos minutos.",
   connection_lost:
@@ -76,11 +77,11 @@ const voiceErrorMessages: Record<string, string> = {
   data_channel_error:
     "El canal de control de la conversación se interrumpió. Intenta reconectarlo.",
   provider_rate_limit:
-    "OpenAI aplicó un límite temporal. Espera un momento antes de reintentar.",
+    "El servicio de voz aplicó un límite temporal. Espera un momento antes de reintentar.",
   provider_quota:
-    "La cuenta de OpenAI no tiene cuota disponible. Revisa la facturación o los límites de uso.",
+    "El servicio de voz no tiene uso disponible. Revisa su configuración antes de reintentar.",
   provider_error:
-    "OpenAI interrumpió la conversación. Puedes intentar iniciar una sesión nueva.",
+    "El servicio de voz interrumpió la conversación. Puedes intentar iniciar una sesión nueva.",
   invalid_provider_event:
     "Se recibió una respuesta de voz incompleta. Intenta iniciar una sesión nueva.",
 };
@@ -110,6 +111,9 @@ export function RealtimeTutorSession({
   const [state, setState] = useState<VoiceConnectionState>("idle");
   const [errorCode, setErrorCode] = useState("");
   const [transcripts, setTranscripts] = useState<VoiceTranscript[]>([]);
+  const [excludedTranscriptIds, setExcludedTranscriptIds] = useState<
+    Set<string>
+  >(new Set());
   const [usage, setUsage] = useState<VoiceUsage>({
     inputTokens: 0,
     outputTokens: 0,
@@ -165,6 +169,17 @@ export function RealtimeTutorSession({
     });
   };
 
+  /** Permite corregir la revisión sin ocultar lo que transcribió el proveedor. */
+  const toggleTranscriptInReview = (turnId: number | string) => {
+    setExcludedTranscriptIds((current) => {
+      const next = new Set(current);
+      const id = String(turnId);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   /** Crea un cliente nuevo y conecta sus cuatro canales de eventos con React. */
   const start = () => {
     setErrorCode("");
@@ -198,12 +213,24 @@ export function RealtimeTutorSession({
       startedAtUtc: startedAtRef.current,
       endedAtUtc: new Date().toISOString(),
       turns: transcripts
-        .filter((item) => item.final && item.text.trim())
+        .filter(
+          (item) =>
+            item.final &&
+            item.text.trim() &&
+            !excludedTranscriptIds.has(item.id),
+        )
         .map((item) => ({ speaker: item.speaker, text: item.text.trim() })),
       inputTokens: usage.inputTokens,
       outputTokens: usage.outputTokens,
     });
-  }, [onComplete, setup, transcripts, usage.inputTokens, usage.outputTokens]);
+  }, [
+    excludedTranscriptIds,
+    onComplete,
+    setup,
+    transcripts,
+    usage.inputTokens,
+    usage.outputTokens,
+  ]);
 
   // El reloj solo avanza mientras la conversación está activa y finaliza en cero.
   useEffect(() => {
@@ -224,7 +251,7 @@ export function RealtimeTutorSession({
     <section className="session" aria-labelledby="voice-session-title">
       <header className="session__header">
         <div>
-          <p className="eyebrow">Tutor de voz · WebRTC</p>
+          <p className="eyebrow">Práctica de conversación</p>
           <h1 id="voice-session-title">{translate(scenario.titleKey)}</h1>
         </div>
         <div className="session__status">
@@ -247,16 +274,11 @@ export function RealtimeTutorSession({
           )}
         </div>
         {state === "idle" ? (
-          <>
-            <p>
-              Activa el micrófono cuando estés listo. El audio viaja por WebRTC
-              y la clave de OpenAI permanece en el backend.
-            </p>
-            <Button onClick={start} size="large">
-              <Mic aria-hidden="true" size={19} />
-              Activar micrófono
-            </Button>
-          </>
+          <VoiceReadiness
+            apiBaseUrl={API_BASE_URL}
+            onFallback={onFallback}
+            onStart={start}
+          />
         ) : (
           <p>{stateLabels[state]}…</p>
         )}
@@ -281,29 +303,20 @@ export function RealtimeTutorSession({
               Reintentar
             </Button>
             <Button onClick={onFallback} variant="ghost">
-              Usar demo local
+              Practicar escribiendo
             </Button>
           </div>
         </div>
       )}
 
       {captions && (
-        <ol className="transcript" aria-label="Subtítulos de la conversación">
-          {transcripts.length === 0 && (
-            <li className="transcript__empty">
-              Los subtítulos aparecerán cuando empiece la conversación.
-            </li>
-          )}
-          {transcripts.map((transcript) => (
-            <li
-              className={`turn turn--${transcript.speaker}`}
-              key={transcript.id}
-            >
-              <strong>{transcript.speaker === "tutor" ? "Tutor" : "Tú"}</strong>
-              <span>{transcript.text}</span>
-            </li>
-          ))}
-        </ol>
+        <ConversationTranscript
+          emptyMessage="Los subtítulos aparecerán cuando empiece la conversación."
+          excludedTurnIds={excludedTranscriptIds}
+          label="Subtítulos de la conversación"
+          onToggleExclude={toggleTranscriptInReview}
+          turns={transcripts}
+        />
       )}
 
       <div className="session-controls" aria-label="Controles de sesión">
@@ -362,10 +375,14 @@ export function RealtimeTutorSession({
           <span>Terminar</span>
         </button>
       </div>
-      <p className="usage-note">
-        Límite: {Math.min(setup.duration, 15)} min · Salida acotada por turno ·
-        Uso reportado: {usage.totalTokens} tokens
-      </p>
+      <p className="usage-note">El audio se procesa en vivo y no se guarda.</p>
+      <details className="session-diagnostics">
+        <summary>Detalles técnicos</summary>
+        <p>
+          Conexión WebRTC · Límite: {Math.min(setup.duration, 15)} min · Uso
+          reportado: {usage.totalTokens} tokens
+        </p>
+      </details>
     </section>
   );
 }

@@ -18,6 +18,7 @@ import { type FormEvent, useRef, useState } from "react";
 
 import type { CompletedSession, SessionSetup } from "./appTypes";
 import { findScenario, translate } from "./catalog";
+import { ConversationTranscript } from "./ConversationTranscript";
 import { openingFor, replyFor, type TutorTurn } from "./deterministicTutor";
 
 /**
@@ -94,17 +95,10 @@ export function TutorSession({
       </div>
 
       {captions && (
-        <ol
-          className="transcript"
-          aria-label="Transcripción de la conversación"
-        >
-          {turns.map((turn) => (
-            <li className={`turn turn--${turn.speaker}`} key={turn.id}>
-              <strong>{turn.speaker === "tutor" ? "Tutor" : "Tú"}</strong>
-              <span>{turn.text}</span>
-            </li>
-          ))}
-        </ol>
+        <ConversationTranscript
+          label="Transcripción de la conversación"
+          turns={turns}
+        />
       )}
 
       <form className="utterance-form" onSubmit={submit}>
