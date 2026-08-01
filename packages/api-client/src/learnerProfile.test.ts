@@ -116,4 +116,32 @@ describe("SpeakFlowApiClient", () => {
       undefined,
     );
   });
+
+  it("preserves the browser receiver when invoking fetch", async () => {
+    const progress = {
+      total_sessions: 0,
+      total_minutes: 0,
+      learner_turns: 0,
+      current_streak_days: 0,
+      sessions_by_mode: [],
+      focus_areas: [],
+      recent_sessions: [],
+    };
+    const receiverSensitiveFetch = function (this: unknown): Promise<Response> {
+      if (this !== globalThis) throw new TypeError("Illegal invocation");
+      return Promise.resolve(
+        new Response(JSON.stringify(progress), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
+    } as unknown as typeof fetch;
+
+    await expect(
+      new SpeakFlowApiClient(
+        "http://api.test",
+        receiverSensitiveFetch,
+      ).getProgress(),
+    ).resolves.toEqual({ ok: true, value: progress });
+  });
 });

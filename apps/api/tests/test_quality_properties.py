@@ -2,12 +2,34 @@ from __future__ import annotations
 
 import random
 import string
+from pathlib import Path
 
 import pytest
 
 from speakflow_api.application.feedback import generate_feedback
 from speakflow_api.core.config import load_settings
 from speakflow_api.domain.practice_session import SessionTurn
+
+
+def test_relative_storage_paths_resolve_from_repository(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("SPEAKFLOW_DATA_DIR", "./data")
+    monkeypatch.setenv(
+        "SPEAKFLOW_DATABASE_URL",
+        "sqlite:///./data/speakflowai-dev.db",
+    )
+
+    settings = load_settings()
+    repository_root = next(
+        parent
+        for parent in Path(__file__).resolve().parents
+        if (parent / "pnpm-workspace.yaml").exists()
+    )
+    expected_database = (repository_root / "data" / "speakflowai-dev.db").resolve()
+
+    assert settings.data_dir == (repository_root / "data").resolve()
+    assert settings.database_url == f"sqlite:///{expected_database.as_posix()}"
 
 
 def test_feedback_is_bounded_for_generated_unicode_inputs() -> None:

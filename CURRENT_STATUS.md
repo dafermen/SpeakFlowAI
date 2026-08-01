@@ -24,7 +24,12 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T02 está completada.**
+**Ninguna. M1-T03 está completada.**
+
+La voz real fue validada por el usuario. El cliente de datos ahora invoca `fetch`
+con el contexto global, la base SQLite de la raíz tiene las cuatro migraciones y
+las rutas relativas se resuelven desde el repositorio aunque la API se inicie
+desde otra carpeta.
 
 La causa raíz era invocar `window.fetch` como propiedad de la clase WebRTC. En
 Chrome esto cambia su receptor y produce `TypeError: Illegal invocation` antes
@@ -59,6 +64,16 @@ Mantenimiento M1-T02 del 2026-07-31:
 - Prueba completa de la interfaz en Chrome: `OPTIONS` 200, `POST` 200 y estado `Escuchando`.
 - Cliente web: 14 pruebas aprobadas; lint, tipos, build y bundle aprobados.
 - Audio personal: no grabado ni persistido.
+
+Mantenimiento M1-T03 del 2026-07-31:
+
+- Conversación de voz real y revisión local: confirmadas por el usuario.
+- Cliente API: contexto global de `fetch` aplicado a perfiles, sesiones y progreso.
+- SQLite raíz: migraciones `0001` a `0004` aplicadas; progreso responde 200.
+- Chrome con cliente API real: `RESULT=ok sessions=0`.
+- Cliente API: 5 pruebas; web: 14 pruebas; backend: 21 pruebas aprobadas.
+- Ruff, formato Python, mypy, lint, tipos, builds y bundle: aprobados.
+- La sesión que originó el aviso quedó como copia local; no se fabricaron datos para reemplazarla.
 
 Auditoría de Fase 0 del 2026-07-30:
 

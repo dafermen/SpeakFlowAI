@@ -24,6 +24,8 @@ salir de la revisión.
 3. Recarga **Progreso** o usa **Reintentar**.
 
 El comando de migración está en [Preparar el entorno](development/GETTING_STARTED.md#base-de-datos).
+Ejecuta tanto la migración como Uvicorn desde la raíz de SpeakFlowAI. Las rutas
+relativas se normalizan hacia esa raíz para evitar bases vacías duplicadas.
 
 ## Las preferencias se restablecieron
 

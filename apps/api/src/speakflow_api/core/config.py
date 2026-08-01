@@ -23,6 +23,23 @@ def _bounded_int(name: str, default: int, minimum: int, maximum: int) -> int:
     return min(maximum, max(minimum, value))
 
 
+def _resolve_from_repository(path: Path, repository_root: Path) -> Path:
+    return (path if path.is_absolute() else repository_root / path).resolve()
+
+
+def _resolve_database_url(raw: str | None, data_dir: Path, repository_root: Path) -> str:
+    if raw is None:
+        return f"sqlite:///{(data_dir / 'speakflowai-dev.db').as_posix()}"
+    prefix = "sqlite:///"
+    if not raw.startswith(prefix):
+        return raw
+    sqlite_path = raw.removeprefix(prefix)
+    if sqlite_path == ":memory:":
+        return raw
+    resolved_path = _resolve_from_repository(Path(sqlite_path), repository_root)
+    return f"{prefix}{resolved_path.as_posix()}"
+
+
 @dataclass(frozen=True, slots=True)
 class Settings:
     environment: str
@@ -35,10 +52,15 @@ class Settings:
 
 
 def load_settings() -> Settings:
-    data_dir = Path(os.getenv("SPEAKFLOW_DATA_DIR", _repository_root() / "data")).resolve()
-    database_url = os.getenv(
-        "SPEAKFLOW_DATABASE_URL",
-        f"sqlite:///{(data_dir / 'speakflowai-dev.db').as_posix()}",
+    repository_root = _repository_root()
+    data_dir = _resolve_from_repository(
+        Path(os.getenv("SPEAKFLOW_DATA_DIR", "data")),
+        repository_root,
+    )
+    database_url = _resolve_database_url(
+        os.getenv("SPEAKFLOW_DATABASE_URL"),
+        data_dir,
+        repository_root,
     )
     return Settings(
         environment=os.getenv("SPEAKFLOW_ENV", "development"),

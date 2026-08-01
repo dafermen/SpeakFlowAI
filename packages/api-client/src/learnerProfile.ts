@@ -78,7 +78,11 @@ export class SpeakFlowApiClient {
     init?: RequestInit,
   ): Promise<ApiResult<T>> {
     try {
-      const response = await this.fetcher(`${this.baseUrl}${path}`, init);
+      const response = await this.fetcher.call(
+        globalThis,
+        `${this.baseUrl}${path}`,
+        init,
+      );
       if (!response.ok) {
         return { ok: false, error: "server" };
       }

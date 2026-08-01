@@ -36,6 +36,11 @@ Si la API local no responde, la web muestra inmediatamente una revisión de
 respaldo y conserva el envío en memoria para reintentarlo durante la vista actual.
 La interfaz distingue claramente una sesión **Guardada** de una **Copia local**.
 
+El cliente ejecuta `fetch` con el contexto global del navegador para evitar
+`Illegal invocation` al guardar o consultar datos. Las rutas relativas de SQLite
+se resuelven desde la raíz del repositorio, no desde el directorio desde el cual
+se inició Uvicorn.
+
 ## Contratos de API
 
 - `POST /api/v1/sessions`: cierra una sesión, genera feedback y la persiste.
