@@ -46,6 +46,55 @@
   text-wrap: balance;
 }
 
+/* Salida clara de la documentación hacia la aplicación principal. */
+.app-home-link {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-left: 14px;
+  padding: 6px 13px;
+  border: 1px solid var(--vp-c-brand-1);
+  border-radius: 999px;
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-1);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-home-link:hover,
+.app-home-link:focus-visible {
+  border-color: var(--vp-c-brand-2);
+  background: var(--vp-c-brand-1);
+  color: var(--vp-c-bg);
+}
+
+.app-home-link:focus-visible {
+  outline: 3px solid var(--vp-c-brand-soft);
+  outline-offset: 2px;
+}
+
+.app-home-link--mobile {
+  display: none;
+}
+
+@media (max-width: 959px) {
+  .app-home-link--desktop {
+    display: none;
+  }
+
+  .app-home-link--mobile {
+    display: flex;
+    min-height: 44px;
+    margin: 20px 24px 8px;
+    font-size: 14px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

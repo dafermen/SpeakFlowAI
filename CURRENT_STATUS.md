@@ -24,7 +24,11 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T12 quedó completada.**
+**Ninguna. M1-T13 quedó completada.**
+
+La navegación documental incorpora un enlace “Volver a la aplicación” con ruta
+directa al inicio de SpeakFlowAI. El control tendrá presentación adecuada tanto
+en la barra de escritorio como en el menú móvil.
 
 La ruta `/docs/` respondía HTTP 200, pero VitePress no hidrataba la página en
 Chrome debido al módulo de desarrollo generado con una ruta local de Windows.
@@ -64,6 +68,16 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T13 del 2026-08-01:
+
+- La barra de escritorio muestra “← Volver a la aplicación”.
+- El menú móvil incluye el mismo enlace con un objetivo táctil de 44 px.
+- Ambos controles usan `href="/"`, por lo que regresan al inicio en local y en
+  despliegues del mismo dominio.
+- El inicio de la aplicación responde HTTP 200 y Chrome renderiza el enlace con
+  una etiqueta accesible.
+- Prettier, ESLint, tipos y build VitePress: aprobados; 0 enlaces muertos.
 
 Mantenimiento M1-T12 del 2026-08-01:
 

@@ -143,3 +143,4 @@ Una sola tarea puede estar `IN_PROGRESS`. La siguiente se desbloquea cuando la a
 |    10 | M1-T10 | Crear favicon y variantes de icono web coherentes con la marca           | DONE   |
 |    11 | M1-T11 | Evitar cortes involuntarios al final de las respuestas de voz            | DONE   |
 |    12 | M1-T12 | Corregir la carga local de la documentación en navegadores externos      | DONE   |
+|    13 | M1-T13 | Añadir regreso visible desde la documentación a la aplicación            | DONE   |
