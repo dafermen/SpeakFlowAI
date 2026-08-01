@@ -36,6 +36,63 @@ export interface RealtimeStartOptions {
   voiceId: string;
 }
 
+export type RealtimeStartStage =
+  | "microphone"
+  | "webrtc-initialization"
+  | "api-request"
+  | "webrtc-negotiation";
+
+const KNOWN_START_ERROR_CODES = new Set([
+  "missing_sdp",
+  "not_configured",
+  "session_limit",
+  "session_start_failed",
+]);
+
+function errorProperty(error: unknown, property: "message" | "name"): string {
+  if (!error || typeof error !== "object" || !(property in error)) return "";
+  const value = (error as Record<string, unknown>)[property];
+  return typeof value === "string" ? value : "";
+}
+
+export function shouldRetryBasicMicrophone(error: unknown): boolean {
+  return ["OverconstrainedError", "ConstraintNotSatisfiedError"].includes(
+    errorProperty(error, "name"),
+  );
+}
+
+export function normalizeRealtimeStartError(
+  error: unknown,
+  stage: RealtimeStartStage,
+): string {
+  const errorName = errorProperty(error, "name");
+  const errorMessage = errorProperty(error, "message");
+
+  if (KNOWN_START_ERROR_CODES.has(errorMessage)) {
+    return errorMessage === "missing_sdp"
+      ? "webrtc_initialization_failed"
+      : errorMessage;
+  }
+
+  if (stage === "microphone") {
+    if (["NotAllowedError", "SecurityError", "PermissionDeniedError"].includes(errorName)) {
+      return "microphone_denied";
+    }
+    if (["NotFoundError", "DevicesNotFoundError"].includes(errorName)) {
+      return "microphone_not_found";
+    }
+    if (shouldRetryBasicMicrophone(error)) return "microphone_constraints";
+    if (["NotReadableError", "TrackStartError", "AbortError"].includes(errorName)) {
+      return "microphone_unavailable";
+    }
+    return "microphone_unsupported";
+  }
+
+  if (stage === "api-request") return "api_unreachable";
+  if (stage === "webrtc-negotiation") return "webrtc_negotiation_failed";
+  return "webrtc_initialization_failed";
+}
+
 interface RealtimeServerEvent {
   type?: string;
   item_id?: string;
@@ -155,15 +212,11 @@ export class WebRtcRealtimeClient {
   async start(options: RealtimeStartOptions): Promise<void> {
     this.options = options;
     this.callbacks.onStateChange("requesting-permission");
+    let stage: RealtimeStartStage = "microphone";
     try {
-      this.localStream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          autoGainControl: true,
-          echoCancellation: true,
-          noiseSuppression: true,
-        },
-      });
+      this.localStream = await this.requestMicrophone();
       this.callbacks.onStateChange("connecting");
+      stage = "webrtc-initialization";
       const peerConnection = new RTCPeerConnection();
       this.peerConnection = peerConnection;
 
@@ -203,6 +256,7 @@ export class WebRtcRealtimeClient {
         speaking_speed: options.speakingSpeed,
         voice_id: options.voiceId,
       });
+      stage = "api-request";
       const response = await this.fetcher(
         `${this.apiBaseUrl}/api/v1/realtime/session?${query}`,
         {
@@ -220,19 +274,14 @@ export class WebRtcRealtimeClient {
               : "session_start_failed";
         throw new Error(code);
       }
+      stage = "webrtc-negotiation";
       await peerConnection.setRemoteDescription({
         type: "answer",
         sdp: await response.text(),
       });
     } catch (error) {
       this.stop();
-      const code =
-        error instanceof DOMException && error.name === "NotAllowedError"
-          ? "microphone_denied"
-          : error instanceof Error
-            ? error.message
-            : "session_start_failed";
-      this.reportError(code);
+      this.reportError(normalizeRealtimeStartError(error, stage));
     }
   }
 
@@ -304,6 +353,25 @@ export class WebRtcRealtimeClient {
       this.callbacks.onTranscript(interpreted.transcript);
     if (interpreted.usage) this.callbacks.onUsage(interpreted.usage);
     if (interpreted.error) this.reportError(interpreted.error);
+  }
+
+  private async requestMicrophone(): Promise<MediaStream> {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      throw new DOMException("Microphone capture is unavailable", "NotSupportedError");
+    }
+
+    try {
+      return await navigator.mediaDevices.getUserMedia({
+        audio: {
+          autoGainControl: true,
+          echoCancellation: true,
+          noiseSuppression: true,
+        },
+      });
+    } catch (error) {
+      if (!shouldRetryBasicMicrophone(error)) throw error;
+      return navigator.mediaDevices.getUserMedia({ audio: true });
+    }
   }
 
   private handleConnectionStateChange(

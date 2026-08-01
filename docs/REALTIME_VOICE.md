@@ -58,10 +58,16 @@ La [guía oficial de costes Realtime](https://developers.openai.com/api/docs/gui
 ## Recuperación
 
 La interfaz distingue permiso denegado, API sin configurar, límite temporal,
-cuota, canal de control, pérdida de conexión y fallo del proveedor. Una
+micrófono ausente u ocupado, WebRTC incompatible, API inalcanzable, negociación
+fallida, cuota, canal de control, pérdida de conexión y fallo del proveedor. Una
 desconexión WebRTC transitoria dispone de cuatro segundos para recuperarse antes
 de declararse caída. La persona puede reintentar la conexión o cambiar a la demo
 determinista sin perder el escenario elegido.
+
+Si el dispositivo rechaza cancelación de eco, ganancia automática o reducción
+de ruido, el cliente vuelve a intentar una vez con `audio: true`. Si los registros
+de FastAPI no muestran `POST /api/v1/realtime/session`, el fallo ocurrió antes de
+OpenAI y se diagnostica en las etapas de micrófono o inicialización WebRTC.
 
 ## Configuración
 

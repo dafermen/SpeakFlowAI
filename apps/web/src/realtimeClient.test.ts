@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import {
   interpretRealtimeEvent,
   normalizeRealtimeError,
+  normalizeRealtimeStartError,
+  shouldRetryBasicMicrophone,
 } from "./realtimeClient";
 
 describe("Realtime event interpreter", () => {
@@ -81,5 +83,48 @@ describe("Realtime event interpreter", () => {
         error: { code: "arbitrary_internal_provider_code" },
       }),
     ).toEqual({ error: "provider_error" });
+  });
+
+  it("classifies microphone failures before the API request", () => {
+    expect(
+      normalizeRealtimeStartError(
+        new DOMException("Device is busy", "NotReadableError"),
+        "microphone",
+      ),
+    ).toBe("microphone_unavailable");
+    expect(
+      normalizeRealtimeStartError(
+        new DOMException("No device", "NotFoundError"),
+        "microphone",
+      ),
+    ).toBe("microphone_not_found");
+    expect(
+      normalizeRealtimeStartError(new TypeError("No mediaDevices"), "microphone"),
+    ).toBe("microphone_unsupported");
+  });
+
+  it("retries unsupported enhanced microphone constraints with basic audio", () => {
+    expect(
+      shouldRetryBasicMicrophone(
+        new DOMException("Unsupported constraint", "OverconstrainedError"),
+      ),
+    ).toBe(true);
+    expect(
+      shouldRetryBasicMicrophone(
+        new DOMException("Device is busy", "NotReadableError"),
+      ),
+    ).toBe(false);
+  });
+
+  it("classifies failures in each WebRTC startup stage", () => {
+    expect(
+      normalizeRealtimeStartError(new TypeError("Failed to fetch"), "api-request"),
+    ).toBe("api_unreachable");
+    expect(
+      normalizeRealtimeStartError(
+        new DOMException("Invalid SDP", "OperationError"),
+        "webrtc-negotiation",
+      ),
+    ).toBe("webrtc_negotiation_failed");
   });
 });

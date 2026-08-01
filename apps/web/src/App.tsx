@@ -722,6 +722,14 @@ const stateLabels: Record<VoiceConnectionState, string> = {
 const voiceErrorMessages: Record<string, string> = {
   microphone_denied:
     "El navegador no recibió permiso para usar el micrófono. Revisa el permiso del sitio e inténtalo otra vez.",
+  microphone_not_found:
+    "Windows no informó ningún micrófono disponible. Conecta o habilita un dispositivo de entrada e inténtalo otra vez.",
+  microphone_unavailable:
+    "El micrófono está ocupado o Windows no pudo iniciarlo. Cierra otras aplicaciones que lo estén usando y vuelve a intentar.",
+  microphone_constraints:
+    "El micrófono no admite la configuración solicitada. SpeakFlowAI intentó también el modo de compatibilidad básico.",
+  microphone_unsupported:
+    "Este navegador no permite capturar el micrófono en esta página. Usa Chrome actualizado y revisa los permisos del sitio.",
   not_configured:
     "La voz todavía no tiene una credencial configurada en la API local.",
   session_limit:
@@ -730,6 +738,12 @@ const voiceErrorMessages: Record<string, string> = {
     "La conexión de voz se interrumpió. Puedes intentar reconectarla.",
   session_start_failed:
     "No pudimos iniciar la voz. Comprueba que la API local esté activa.",
+  api_unreachable:
+    "La página no pudo comunicarse con la API local en el puerto 8000. Comprueba que siga activa y vuelve a intentar.",
+  webrtc_initialization_failed:
+    "El navegador no pudo preparar la conexión de voz WebRTC. Cierra otras sesiones de voz y vuelve a intentar.",
+  webrtc_negotiation_failed:
+    "El navegador recibió la sesión, pero no pudo completar la conexión WebRTC. Vuelve a intentarlo en una sesión nueva.",
   data_channel_error:
     "El canal de control de la conversación se interrumpió. Intenta reconectarlo.",
   provider_rate_limit:

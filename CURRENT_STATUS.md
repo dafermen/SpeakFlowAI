@@ -24,7 +24,17 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T01 está completada.**
+**M1-T02 — Diagnosticar y recuperar fallos previos a la solicitud SDP.**
+
+El intento real del usuario no produjo ninguna solicitud al endpoint de sesión,
+por lo que el fallo está acotado a la captura del micrófono o la inicialización
+WebRTC en el navegador, antes del contacto con FastAPI y OpenAI.
+
+Windows detecta `Microphone Array`, los servicios de audio están activos y los
+permisos de escritorio/Codex están habilitados. El último intento abrió el
+micrófono durante 5 ms y lo cerró antes de enviar SDP. La nueva compilación
+clasifica cada etapa y reintenta restricciones incompatibles con audio básico;
+queda pendiente la repetición manual en el navegador del usuario.
 
 El cliente concede cuatro segundos de recuperación a una desconexión WebRTC
 transitoria y reserva el error inmediato para una conexión realmente fallida.
@@ -44,6 +54,15 @@ Mantenimiento M1-T01 del 2026-07-31:
 - Cliente web: 10 pruebas aprobadas; lint y tipos aprobados.
 - Build de producción y presupuesto de bundle: aprobados.
 - No se persistió audio ni se expuso la clave del backend.
+
+Validación parcial M1-T02 del 2026-07-31:
+
+- API saludable, sin solicitudes SDP durante el fallo real observado.
+- Micrófono presente, servicios de audio activos y privacidad habilitada.
+- Errores de micrófono, API y negociación clasificados sin datos sensibles.
+- Fallback automático de restricciones avanzadas a captura básica.
+- Cliente web: 13 pruebas aprobadas; lint, tipos, build y bundle aprobados.
+- Verificación manual con el micrófono real: pendiente.
 
 Auditoría de Fase 0 del 2026-07-30:
 
