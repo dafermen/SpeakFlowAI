@@ -24,11 +24,11 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T09 quedó completada.**
+**Ninguna. M1-T10 quedó completada.**
 
-La conversación permanece anclada al turno reciente sin impedir leer hacia
-arriba. El recorrido incorpora diagnóstico previo de voz, lenguaje humano,
-recomendaciones personalizadas y acciones de continuidad tras cada práctica.
+La web usa ahora el símbolo de ondas de SpeakFlowAI en pestañas, navegadores
+tradicionales y accesos móviles de Apple, con variantes reproducibles y sin
+dependencias externas.
 
 El código de producción está documentado para lectura educativa: backend,
 contratos compartidos, adaptadores, React, WebRTC y estilos. El recorrido guiado
@@ -59,6 +59,15 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T10 del 2026-08-01:
+
+- Favicon SVG, fallback ICO, PNG de 32 px e icono Apple de 180 px creados.
+- Símbolo de tres ondas verificado visualmente a tamaño completo y 32 × 32.
+- HTML enlaza explícitamente los formatos y evita la solicitud 404 anterior.
+- Generador PowerShell reproducible basado en los colores oficiales de la marca.
+- Prettier, build web y presupuesto de bundle: aprobados.
+- Los cuatro recursos responden HTTP 200 con su tipo de contenido correcto en `4173`.
 
 Mantenimiento M1-T09 del 2026-08-01:
 

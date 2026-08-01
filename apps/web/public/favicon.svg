@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SpeakFlowAI">
+  <rect x="2" y="2" width="60" height="60" rx="17" fill="#176b87" />
+  <g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="4">
+    <path d="M14 21c5-6 9 6 14 0s9 6 14 0 6 1 8 0" />
+    <path d="M14 32c5-6 9 6 14 0s9 6 14 0 6 1 8 0" />
+    <path d="M14 43c5-6 9 6 14 0s9 6 14 0 6 1 8 0" />
+  </g>
+</svg>
