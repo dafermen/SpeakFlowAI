@@ -24,7 +24,11 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. La secuencia del MVP está cerrada.**
+**Ninguna. M1-T01 está completada.**
+
+El cliente concede cuatro segundos de recuperación a una desconexión WebRTC
+transitoria y reserva el error inmediato para una conexión realmente fallida.
+Los errores del proveedor se agrupan en mensajes seguros y accionables.
 
 La autenticación real, el acceso a `gpt-realtime-2.1-mini`, la negociación SDP
 y el canal WebRTC `connected/open` están aprobados. La comprobación audible de
@@ -32,6 +36,14 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T01 del 2026-07-31:
+
+- Credencial, modelo, negociación SDP y canal de datos: aprobados.
+- Audio sintético enviado por WebRTC y respuesta de voz/transcripción: aprobados.
+- Cliente web: 10 pruebas aprobadas; lint y tipos aprobados.
+- Build de producción y presupuesto de bundle: aprobados.
+- No se persistió audio ni se expuso la clave del backend.
 
 Auditoría de Fase 0 del 2026-07-30:
 

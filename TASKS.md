@@ -126,3 +126,9 @@ como validación manual y no bloquea el desarrollo posterior.
 ## Regla de desbloqueo
 
 Una sola tarea puede estar `IN_PROGRESS`. La siguiente se desbloquea cuando la actual cumple sus criterios.
+
+## Mantenimiento posterior a 1.0
+
+| Orden | ID | Actividad/tarea | Estado |
+| ---: | --- | --- | --- |
+| 1 | M1-T01 | Corregir falsos cortes y diagnósticos genéricos en la sesión WebRTC | DONE |

@@ -57,7 +57,11 @@ La [guía oficial de costes Realtime](https://developers.openai.com/api/docs/gui
 
 ## Recuperación
 
-La interfaz distingue permiso denegado, API sin configurar, límite temporal, pérdida de conexión y fallo del proveedor. Puede reintentar la conexión o cambiar a la demo determinista sin perder el escenario elegido.
+La interfaz distingue permiso denegado, API sin configurar, límite temporal,
+cuota, canal de control, pérdida de conexión y fallo del proveedor. Una
+desconexión WebRTC transitoria dispone de cuatro segundos para recuperarse antes
+de declararse caída. La persona puede reintentar la conexión o cambiar a la demo
+determinista sin perder el escenario elegido.
 
 ## Configuración
 
@@ -74,6 +78,7 @@ Sin `OPENAI_API_KEY`, el endpoint devuelve `503 realtime_not_configured` y la ex
 
 El 2026-07-31 se verificaron una clave local sin exponerla, el acceso a
 `gpt-realtime-2.1-mini`, la creación de una llamada SDP mediante FastAPI y la
-apertura del canal WebRTC en estado `connected/open`. La última comprobación
-manual consiste en hablar por el micrófono y confirmar audio audible en ambos
-sentidos desde la interfaz.
+apertura del canal WebRTC en estado `connected/open`. Una prueba automatizada
+posterior envió una frase sintética como audio WebRTC y recibió la transcripción
+de salida de la respuesta. La comprobación audible con el micrófono real sigue
+siendo manual porque requiere la voz y los altavoces de la persona usuaria.

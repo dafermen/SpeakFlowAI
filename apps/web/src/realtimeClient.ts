@@ -42,7 +42,7 @@ interface RealtimeServerEvent {
   response_id?: string;
   delta?: string;
   transcript?: string;
-  error?: { code?: string };
+  error?: { code?: string; type?: string };
   response?: {
     usage?: {
       input_tokens?: number;
@@ -50,6 +50,27 @@ interface RealtimeServerEvent {
       total_tokens?: number;
     };
   };
+}
+
+export function normalizeRealtimeError(
+  error?: RealtimeServerEvent["error"],
+): string {
+  const providerCode = `${error?.code ?? ""} ${error?.type ?? ""}`.toLowerCase();
+  if (providerCode.includes("rate_limit")) return "provider_rate_limit";
+  if (
+    providerCode.includes("quota") ||
+    providerCode.includes("billing") ||
+    providerCode.includes("insufficient")
+  ) {
+    return "provider_quota";
+  }
+  if (
+    providerCode.includes("session_expired") ||
+    providerCode.includes("session_closed")
+  ) {
+    return "connection_lost";
+  }
+  return "provider_error";
 }
 
 export function interpretRealtimeEvent(event: RealtimeServerEvent): {
@@ -108,7 +129,7 @@ export function interpretRealtimeEvent(event: RealtimeServerEvent): {
       };
     }
     case "error":
-      return { error: event.error?.code ?? "provider_error" };
+      return { error: normalizeRealtimeError(event.error) };
     default:
       return {};
   }
@@ -122,11 +143,13 @@ export class WebRtcRealtimeClient {
   private options: RealtimeStartOptions | null = null;
   private muted = false;
   private paused = false;
+  private disconnectTimer: number | null = null;
 
   constructor(
     private readonly callbacks: RealtimeCallbacks,
     private readonly apiBaseUrl = "http://127.0.0.1:8000",
     private readonly fetcher: typeof fetch = fetch,
+    private readonly disconnectGraceMs = 4_000,
   ) {}
 
   async start(options: RealtimeStartOptions): Promise<void> {
@@ -153,13 +176,7 @@ export class WebRtcRealtimeClient {
         audioElement.srcObject = event.streams[0] ?? null;
       };
       peerConnection.onconnectionstatechange = () => {
-        if (
-          ["failed", "disconnected"].includes(peerConnection.connectionState) &&
-          !this.paused
-        ) {
-          this.callbacks.onStateChange("error");
-          this.callbacks.onError("connection_lost");
-        }
+        this.handleConnectionStateChange(peerConnection);
       };
       this.localStream
         .getAudioTracks()
@@ -168,13 +185,14 @@ export class WebRtcRealtimeClient {
       const dataChannel = peerConnection.createDataChannel("oai-events");
       this.dataChannel = dataChannel;
       dataChannel.addEventListener("open", () => {
+        this.clearDisconnectTimer();
         this.callbacks.onStateChange("listening");
       });
       dataChannel.addEventListener("message", (message) => {
         this.handleMessage(String(message.data));
       });
       dataChannel.addEventListener("error", () => {
-        this.callbacks.onError("data_channel_error");
+        this.reportError("data_channel_error");
       });
 
       const offer = await peerConnection.createOffer();
@@ -214,8 +232,7 @@ export class WebRtcRealtimeClient {
           : error instanceof Error
             ? error.message
             : "session_start_failed";
-      this.callbacks.onStateChange("error");
-      this.callbacks.onError(code);
+      this.reportError(code);
     }
   }
 
@@ -261,6 +278,7 @@ export class WebRtcRealtimeClient {
   }
 
   stop(notify = true): void {
+    this.clearDisconnectTimer();
     this.dataChannel?.close();
     this.peerConnection?.close();
     this.localStream?.getTracks().forEach((track) => track.stop());
@@ -277,7 +295,7 @@ export class WebRtcRealtimeClient {
     try {
       event = JSON.parse(serialized) as RealtimeServerEvent;
     } catch {
-      this.callbacks.onError("invalid_provider_event");
+      this.reportError("invalid_provider_event");
       return;
     }
     const interpreted = interpretRealtimeEvent(event);
@@ -285,7 +303,47 @@ export class WebRtcRealtimeClient {
     if (interpreted.transcript)
       this.callbacks.onTranscript(interpreted.transcript);
     if (interpreted.usage) this.callbacks.onUsage(interpreted.usage);
-    if (interpreted.error) this.callbacks.onError(interpreted.error);
+    if (interpreted.error) this.reportError(interpreted.error);
+  }
+
+  private handleConnectionStateChange(
+    peerConnection: RTCPeerConnection,
+  ): void {
+    if (this.paused || this.peerConnection !== peerConnection) return;
+
+    if (peerConnection.connectionState === "failed") {
+      this.reportError("connection_lost");
+      return;
+    }
+
+    if (peerConnection.connectionState === "disconnected") {
+      if (this.disconnectTimer !== null) return;
+      this.disconnectTimer = window.setTimeout(() => {
+        this.disconnectTimer = null;
+        if (
+          !this.paused &&
+          this.peerConnection === peerConnection &&
+          peerConnection.connectionState === "disconnected"
+        ) {
+          this.reportError("connection_lost");
+        }
+      }, this.disconnectGraceMs);
+      return;
+    }
+
+    this.clearDisconnectTimer();
+  }
+
+  private clearDisconnectTimer(): void {
+    if (this.disconnectTimer === null) return;
+    window.clearTimeout(this.disconnectTimer);
+    this.disconnectTimer = null;
+  }
+
+  private reportError(code: string): void {
+    this.clearDisconnectTimer();
+    this.callbacks.onStateChange("error");
+    this.callbacks.onError(code);
   }
 
   private send(event: object): void {

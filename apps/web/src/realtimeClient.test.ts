@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { interpretRealtimeEvent } from "./realtimeClient";
+import {
+  interpretRealtimeEvent,
+  normalizeRealtimeError,
+} from "./realtimeClient";
 
 describe("Realtime event interpreter", () => {
   it("maps connection states without exposing provider details", () => {
@@ -54,5 +57,29 @@ describe("Realtime event interpreter", () => {
     ).toEqual({
       usage: { inputTokens: 100, outputTokens: 25, totalTokens: 125 },
     });
+  });
+
+  it("turns provider errors into safe, actionable categories", () => {
+    expect(normalizeRealtimeError({ code: "rate_limit_exceeded" })).toBe(
+      "provider_rate_limit",
+    );
+    expect(normalizeRealtimeError({ type: "insufficient_quota" })).toBe(
+      "provider_quota",
+    );
+    expect(normalizeRealtimeError({ code: "session_expired" })).toBe(
+      "connection_lost",
+    );
+    expect(normalizeRealtimeError({ code: "unexpected_provider_detail" })).toBe(
+      "provider_error",
+    );
+  });
+
+  it("does not expose raw provider error codes", () => {
+    expect(
+      interpretRealtimeEvent({
+        type: "error",
+        error: { code: "arbitrary_internal_provider_code" },
+      }),
+    ).toEqual({ error: "provider_error" });
   });
 });

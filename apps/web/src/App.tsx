@@ -730,6 +730,16 @@ const voiceErrorMessages: Record<string, string> = {
     "La conexión de voz se interrumpió. Puedes intentar reconectarla.",
   session_start_failed:
     "No pudimos iniciar la voz. Comprueba que la API local esté activa.",
+  data_channel_error:
+    "El canal de control de la conversación se interrumpió. Intenta reconectarlo.",
+  provider_rate_limit:
+    "OpenAI aplicó un límite temporal. Espera un momento antes de reintentar.",
+  provider_quota:
+    "La cuenta de OpenAI no tiene cuota disponible. Revisa la facturación o los límites de uso.",
+  provider_error:
+    "OpenAI interrumpió la conversación. Puedes intentar iniciar una sesión nueva.",
+  invalid_provider_event:
+    "Se recibió una respuesta de voz incompleta. Intenta iniciar una sesión nueva.",
 };
 
 function RealtimeTutorSession({
@@ -807,7 +817,10 @@ function RealtimeTutorSession({
     const client = new WebRtcRealtimeClient(
       {
         onError: (code) => setErrorCode(code),
-        onStateChange: setState,
+        onStateChange: (nextState) => {
+          setState(nextState);
+          if (nextState !== "error") setErrorCode("");
+        },
         onTranscript: upsertTranscript,
         onUsage: setUsage,
       },
