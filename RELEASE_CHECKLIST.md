@@ -12,7 +12,8 @@
 
 ## Requiere entorno externo
 
-- [ ] Validar audio real con `OPENAI_API_KEY` local.
+- [x] Validar `OPENAI_API_KEY`, acceso al modelo y conexión WebRTC reales.
+- [ ] Validar audio-in/audio-out audible con micrófono local.
 - [ ] Compilar y firmar iOS en macOS/Xcode.
 - [ ] Ejecutar matriz física Android/iOS y lector de pantalla.
 - [ ] Configurar backend HTTPS y `VITE_API_BASE_URL` para distribución.

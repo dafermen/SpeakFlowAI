@@ -26,7 +26,8 @@ Estado: completada
 
 ## Validaciones externas pendientes
 
-- audio real con una `OPENAI_API_KEY` definida únicamente en el backend;
+- audio-in/audio-out audible con micrófono; autenticación, modelo, SDP y canal
+  WebRTC reales ya fueron aprobados con la clave únicamente en backend;
 - compilación y firma iOS en macOS/Xcode;
 - matriz de dispositivos físicos y lector de pantalla;
 - repositorio GitHub remoto y activación pública de Pages;

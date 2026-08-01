@@ -61,7 +61,9 @@ Estados: `DONE`, `IN_PROGRESS`, `READY`, `LOCKED`.
 | 7 | P3-T07 | Validar navegador móvil y contratos sin credencial | DONE |
 | 8 | P3-T08 | Ejecutar puerta de cierre de Fase 3 | DONE |
 
-La prueba con proveedor real queda registrada como validación externa pendiente y no bloquea el desarrollo posterior autorizado por el usuario.
+La autenticación, el acceso al modelo y la conexión WebRTC con el proveedor real
+quedaron aprobados el 2026-07-31. La comprobación audible con micrófono continúa
+como validación manual y no bloquea el desarrollo posterior.
 
 ## Fase 4 - Feedback de aprendizaje
 

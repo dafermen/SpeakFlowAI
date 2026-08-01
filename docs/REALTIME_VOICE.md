@@ -69,3 +69,11 @@ SPEAKFLOW_REALTIME_SESSION_LIMIT_MINUTES=15
 ```
 
 Sin `OPENAI_API_KEY`, el endpoint devuelve `503 realtime_not_configured` y la experiencia local continúa disponible.
+
+## Evidencia con proveedor real
+
+El 2026-07-31 se verificaron una clave local sin exponerla, el acceso a
+`gpt-realtime-2.1-mini`, la creación de una llamada SDP mediante FastAPI y la
+apertura del canal WebRTC en estado `connected/open`. La última comprobación
+manual consiste en hablar por el micrófono y confirmar audio audible en ambos
+sentidos desde la interfaz.

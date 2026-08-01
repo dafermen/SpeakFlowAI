@@ -26,7 +26,10 @@ La puerta final de Fase 8 está aprobada.
 
 **Ninguna. La secuencia del MVP está cerrada.**
 
-La prueba real de audio-in/audio-out permanece como validación externa pendiente. La clave debe definirse localmente en FastAPI y nunca compartirse en el chat ni escribirse en el frontend.
+La autenticación real, el acceso a `gpt-realtime-2.1-mini`, la negociación SDP
+y el canal WebRTC `connected/open` están aprobados. La comprobación audible de
+audio-in/audio-out permanece como validación manual. La clave debe seguir
+únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
 
@@ -81,7 +84,8 @@ Validación parcial de Fase 3 del 2026-07-31:
 - Pruebas TypeScript acumuladas: 19 aprobadas.
 - Pruebas backend acumuladas: 7 aprobadas.
 - Builds React y VitePress: aprobados.
-- Prueba real audio-in/audio-out: pendiente por ausencia de `OPENAI_API_KEY`.
+- Proveedor real: autenticación, modelo, SDP y data channel aprobados el 2026-07-31.
+- Audio-in/audio-out audible: pendiente de comprobación manual con micrófono.
 
 Puerta de Fase 4 del 2026-07-31:
 
