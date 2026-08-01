@@ -221,6 +221,7 @@ export function interpretRealtimeEvent(event: RealtimeServerEvent): {
     case "output_audio_buffer.started":
       return { state: "speaking" };
     case "output_audio_buffer.stopped":
+    case "output_audio_buffer.cleared":
       return { state: "listening" };
     case "conversation.item.input_audio_transcription.completed":
       return {
@@ -427,6 +428,17 @@ export class WebRtcRealtimeClient {
         audio: { output: { speed: 0.85 } },
       },
     });
+  }
+
+  /**
+   * Interrumpe deliberadamente la respuesta actual del tutor.
+   *
+   * Primero detiene la generación y luego vacía el audio que WebRTC ya tenía
+   * preparado. Así el botón responde de inmediato sin depender del VAD.
+   */
+  interruptTutor(): void {
+    this.send({ type: "response.cancel" });
+    this.send({ type: "output_audio_buffer.clear" });
   }
 
   /**

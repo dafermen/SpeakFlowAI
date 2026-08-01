@@ -86,6 +86,8 @@ def test_realtime_session_is_backend_mediated_and_cost_bounded(tmp_path: Path) -
     assert audio_input["noise_reduction"] == {"type": "far_field"}
     assert audio_input["turn_detection"]["threshold"] == 0.55
     assert audio_input["turn_detection"]["silence_duration_ms"] == 750
+    assert audio_input["turn_detection"]["create_response"] is True
+    assert audio_input["turn_detection"]["interrupt_response"] is False
     assert "coffee order" in config["instructions"]
 
 

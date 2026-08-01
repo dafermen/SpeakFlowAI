@@ -6,6 +6,7 @@ import type { Preferences } from "@speakflow/configuration";
 import { Badge, Button } from "@speakflow/design-system";
 import {
   Captions,
+  CircleStop,
   Gauge,
   Pause,
   Play,
@@ -321,16 +322,45 @@ export function RealtimeTutorSession({
 
       <div className="session-controls" aria-label="Controles de sesión">
         <button
-          aria-label={state === "paused" ? "Reanudar" : "Pausar"}
-          disabled={["idle", "connecting", "error"].includes(state)}
+          aria-label={
+            state === "speaking"
+              ? "Interrumpir tutor"
+              : state === "paused"
+                ? "Reanudar"
+                : "Pausar"
+          }
+          disabled={[
+            "idle",
+            "requesting-permission",
+            "connecting",
+            "reconnecting",
+            "ended",
+            "error",
+          ].includes(state)}
           onClick={() => {
+            if (state === "speaking") {
+              clientRef.current?.interruptTutor();
+              return;
+            }
             const paused = state !== "paused";
             clientRef.current?.setPaused(paused);
           }}
           type="button"
         >
-          {state === "paused" ? <Play /> : <Pause />}
-          <span>{state === "paused" ? "Reanudar" : "Pausar"}</span>
+          {state === "speaking" ? (
+            <CircleStop />
+          ) : state === "paused" ? (
+            <Play />
+          ) : (
+            <Pause />
+          )}
+          <span>
+            {state === "speaking"
+              ? "Interrumpir"
+              : state === "paused"
+                ? "Reanudar"
+                : "Pausar"}
+          </span>
         </button>
         <button
           aria-pressed={muted}

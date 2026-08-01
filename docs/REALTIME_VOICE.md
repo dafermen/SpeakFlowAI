@@ -43,10 +43,19 @@ Controles activos:
 - cinco inicios de sesión por proceso cada diez minutos;
 - respuestas de menos de 45 palabras mediante instrucciones;
 - VAD de servidor para evitar enviar silencio como turnos;
+- creación automática del siguiente turno, pero sin cancelar el audio del tutor
+  ante una detección de voz accidental;
 - reducción de ruido `far_field` para el micrófono integrado;
 - inglés y vocabulario del escenario como contexto de transcripción;
 - lectura del uso desde eventos `response.done`;
 - botón explícito para terminar y cierre de pistas, canal y conexión.
+
+El VAD usa `create_response: true` e `interrupt_response: false`. Esta combinación
+mantiene la conversación automática, pero impide que el eco de los altavoces o un
+ruido breve corte las últimas palabras del tutor. Mientras el tutor habla, el
+primer control cambia a **Interrumpir**: una pulsación envía `response.cancel` y
+después `output_audio_buffer.clear`, por lo que la interrupción sigue disponible
+cuando la persona realmente la necesita.
 
 La [guía oficial de costes Realtime](https://developers.openai.com/api/docs/guides/realtime-costs) explica que cada turno reutiliza la conversación acumulada y que los turnos posteriores pueden ser más costosos. Por eso el MVP limita duración, salida y cantidad de reinicios.
 

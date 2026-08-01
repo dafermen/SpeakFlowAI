@@ -166,6 +166,10 @@ def build_session_config(
                     "threshold": 0.55,
                     "prefix_padding_ms": 300,
                     "silence_duration_ms": 750,
+                    # El tutor debe terminar su frase aunque el micrófono detecte eco.
+                    # La interfaz conserva una interrupción manual y deliberada.
+                    "create_response": True,
+                    "interrupt_response": False,
                 },
             },
             "output": {

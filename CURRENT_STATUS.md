@@ -24,11 +24,11 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T10 quedó completada.**
+**Ninguna. M1-T11 quedó completada.**
 
-La web usa ahora el símbolo de ondas de SpeakFlowAI en pestañas, navegadores
-tradicionales y accesos móviles de Apple, con variantes reproducibles y sin
-dependencias externas.
+La corrección impide que eco o ruido detectado durante la voz del tutor cancele
+automáticamente su respuesta. La interrupción intencional permanece disponible
+mediante un control explícito que cancela generación y audio pendiente.
 
 El código de producción está documentado para lectura educativa: backend,
 contratos compartidos, adaptadores, React, WebRTC y estilos. El recorrido guiado
@@ -59,6 +59,18 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T11 del 2026-08-01:
+
+- El VAD conserva la creación automática de turnos y desactiva la interrupción
+  automática provocada por eco o ruido.
+- El control Pausar cambia a “Interrumpir” mientras habla el tutor y cancela
+  generación y audio pendiente de forma deliberada.
+- La interfaz vuelve a escucha cuando OpenAI confirma que el búfer fue detenido
+  o vaciado.
+- Frontend: Prettier, ESLint, tipos, 24 pruebas, build, bundle y configuración
+  nativa aprobados.
+- Backend: formato, Ruff, mypy y 23 pruebas aprobados.
 
 Mantenimiento M1-T10 del 2026-08-01:
 

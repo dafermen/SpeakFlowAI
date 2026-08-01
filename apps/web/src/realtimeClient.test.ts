@@ -1,6 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
+  WebRtcRealtimeClient,
   fetchWithBrowserContext,
   interpretRealtimeEvent,
   normalizeLearnerTranscript,
@@ -17,6 +18,9 @@ describe("Realtime event interpreter", () => {
     expect(
       interpretRealtimeEvent({ type: "output_audio_buffer.started" }),
     ).toEqual({ state: "speaking" });
+    expect(
+      interpretRealtimeEvent({ type: "output_audio_buffer.cleared" }),
+    ).toEqual({ state: "listening" });
   });
 
   it("normalizes learner and tutor transcripts", () => {
@@ -160,5 +164,25 @@ describe("Realtime event interpreter", () => {
     );
 
     expect(response.status).toBe(204);
+  });
+
+  it("cancels generation and clears buffered audio on deliberate interruption", () => {
+    const send = vi.fn();
+    const client = new WebRtcRealtimeClient({
+      onError: vi.fn(),
+      onStateChange: vi.fn(),
+      onTranscript: vi.fn(),
+      onUsage: vi.fn(),
+    });
+    Object.defineProperty(client, "dataChannel", {
+      value: { readyState: "open", send },
+    });
+
+    client.interruptTutor();
+
+    expect(send.mock.calls.map(([message]) => JSON.parse(message))).toEqual([
+      { type: "response.cancel" },
+      { type: "output_audio_buffer.clear" },
+    ]);
   });
 });

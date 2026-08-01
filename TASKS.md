@@ -141,3 +141,4 @@ Una sola tarea puede estar `IN_PROGRESS`. La siguiente se desbloquea cuando la a
 |     8 | M1-T08 | Dividir el frontend monolítico en módulos educativos por responsabilidad | DONE   |
 |     9 | M1-T09 | Mejorar lectura, preparación, aprendizaje y continuidad del recorrido UX | DONE   |
 |    10 | M1-T10 | Crear favicon y variantes de icono web coherentes con la marca           | DONE   |
+|    11 | M1-T11 | Evitar cortes involuntarios al final de las respuestas de voz            | DONE   |
