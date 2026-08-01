@@ -11,13 +11,13 @@
 | Ruta PostgreSQL                               | [DATABASE_STRATEGY](DATABASE_STRATEGY.md), [ADR-0006](adr/ADR-0006-future-postgresql-migration.md)                                                               |
 | LocalStorage                                  | [LOCAL_STORAGE](LOCAL_STORAGE.md), [ADR-0003](adr/ADR-0003-localstorage-for-unauthenticated-preferences.md)                                                      |
 | JSON                                          | [CONTENT_STRATEGY](CONTENT_STRATEGY.md), [ADR-0004](adr/ADR-0004-json-for-static-learning-content.md)                                                            |
-| Arquitectura y secretos                       | [ARCHITECTURE](ARCHITECTURE.md), [SECURITY](../SECURITY.md)                                                                                                      |
+| Arquitectura y secretos                       | [ARCHITECTURE](ARCHITECTURE.md), [SECURITY](/SECURITY)                                                                                                           |
 | Documentación HTML                            | [DOCUMENTATION_SITE](DOCUMENTATION_SITE.md), [ADR-0001](adr/ADR-0001-documentation-as-code.md), [ADR-0002](adr/ADR-0002-use-vitepress-for-documentation-site.md) |
 | GitHub Pages                                  | [DOCUMENTATION_SITE](DOCUMENTATION_SITE.md), [GITHUB_PUBLICATION](GITHUB_PUBLICATION.md)                                                                         |
 | Repositorio público                           | [GITHUB_PUBLICATION](GITHUB_PUBLICATION.md), [ADR-0009](adr/ADR-0009-public-github-readiness.md)                                                                 |
 | Pruebas por etapa                             | [TESTING_STRATEGY](TESTING_STRATEGY.md), [ADR-0008](adr/ADR-0008-stage-expensive-tests.md)                                                                       |
-| Fases secuenciales                            | [ROADMAP](phases/ROADMAP.md), [TASKS](../TASKS.md), [AGENTS](../AGENTS.md)                                                                                       |
-| Estado y siguiente tarea exacta               | [CURRENT_STATUS](../CURRENT_STATUS.md), [PHASE_0](phases/PHASE_0.md)                                                                                             |
+| Fases secuenciales                            | [ROADMAP](phases/ROADMAP.md), [TASKS](/TASKS), [AGENTS](/AGENTS)                                                                                                 |
+| Estado y siguiente tarea exacta               | [CURRENT_STATUS](/CURRENT_STATUS), [PHASE_0](phases/PHASE_0.md)                                                                                                  |
 
 ## Comprobaciones negativas
 

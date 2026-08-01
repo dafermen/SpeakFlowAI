@@ -24,7 +24,12 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T11 quedó completada.**
+**Ninguna. M1-T12 quedó completada.**
+
+La ruta `/docs/` respondía HTTP 200, pero VitePress no hidrataba la página en
+Chrome debido al módulo de desarrollo generado con una ruta local de Windows.
+La solución sirve la compilación estática y corrige el nivel duplicado
+`/docs/docs/` sin modificar el contenido documental.
 
 La corrección impide que eco o ruido detectado durante la voz del tutor cancele
 automáticamente su respuesta. La interrupción intencional permanece disponible
@@ -59,6 +64,19 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T12 del 2026-08-01:
+
+- VitePress sirve ahora su compilación estática en desarrollo local, evitando el
+  módulo con ruta de Windows que Chrome no podía ejecutar.
+- La reescritura aplana la carpeta fuente `docs` y elimina las rutas duplicadas
+  `/docs/docs/`.
+- Navegación, portada y diez enlaces relativos se ajustaron a la base pública.
+- `/docs/`, `/docs/PRODUCT` y el JavaScript principal responden HTTP 200 a través
+  del puerto `4173`.
+- Chrome renderizó título, navegación y enlaces sin duplicación en una prueba
+  automatizada con el navegador real.
+- Prettier, ESLint, tipos y build VitePress: aprobados; 0 enlaces muertos.
 
 Mantenimiento M1-T11 del 2026-08-01:
 

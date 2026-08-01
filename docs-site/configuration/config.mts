@@ -15,6 +15,11 @@ export default withMermaid(
     cleanUrls: true,
     lastUpdated: true,
     outDir: "./dist/docs",
+    // Los documentos viven en /docs dentro del repositorio, pero el sitio ya
+    // usa /docs/ como base pública. Aplanar esta carpeta evita /docs/docs/.
+    rewrites: {
+      "docs/:path*": ":path*",
+    },
     srcExclude: [
       ".venv/**",
       "apps/**",
@@ -40,9 +45,9 @@ export default withMermaid(
     ],
     themeConfig: {
       nav: [
-        { text: "Documentación", link: "/docs/" },
-        { text: "Producto", link: "/docs/PRODUCT" },
-        { text: "Arquitectura", link: "/docs/ARCHITECTURE" },
+        { text: "Documentación", link: "/" },
+        { text: "Producto", link: "/PRODUCT" },
+        { text: "Arquitectura", link: "/ARCHITECTURE" },
         { text: "Estado", link: "/CURRENT_STATUS" },
       ],
       sidebar,

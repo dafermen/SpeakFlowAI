@@ -41,12 +41,12 @@
 - [Roadmap de fases](phases/ROADMAP.md)
 - [Cierre de Fase 0](phases/PHASE_0.md)
 - [Cierre de Fase 1](phases/PHASE_1.md)
-- [Informe de finalización de Fase 0](../PHASE_0_COMPLETION_REPORT.md)
-- [Informe de finalización de Fase 1](../PHASE_1_COMPLETION_REPORT.md)
-- [Informe de finalización de Fase 2](../PHASE_2_COMPLETION_REPORT.md)
-- [Informe de finalización de Fase 8](../PHASE_8_COMPLETION_REPORT.md)
-- [Notas de versión 1.0.0](../RELEASE_NOTES_1.0.0.md)
-- [Checklist de release](../RELEASE_CHECKLIST.md)
+- [Informe de finalización de Fase 0](/PHASE_0_COMPLETION_REPORT)
+- [Informe de finalización de Fase 1](/PHASE_1_COMPLETION_REPORT)
+- [Informe de finalización de Fase 2](/PHASE_2_COMPLETION_REPORT)
+- [Informe de finalización de Fase 8](/PHASE_8_COMPLETION_REPORT)
+- [Notas de versión 1.0.0](/RELEASE_NOTES_1.0.0)
+- [Checklist de release](/RELEASE_CHECKLIST)
 - [Registro de decisiones arquitectónicas](adr/README.md)
 
 Los documentos fuente vivirán en `docs/` y VitePress los convertirá en HTML navegable desde la Fase 1. La documentación para usuario y la de desarrollo tendrán navegación separada, pero compartirán búsqueda y diseño.

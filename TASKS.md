@@ -142,3 +142,4 @@ Una sola tarea puede estar `IN_PROGRESS`. La siguiente se desbloquea cuando la a
 |     9 | M1-T09 | Mejorar lectura, preparación, aprendizaje y continuidad del recorrido UX | DONE   |
 |    10 | M1-T10 | Crear favicon y variantes de icono web coherentes con la marca           | DONE   |
 |    11 | M1-T11 | Evitar cortes involuntarios al final de las respuestas de voz            | DONE   |
+|    12 | M1-T12 | Corregir la carga local de la documentación en navegadores externos      | DONE   |

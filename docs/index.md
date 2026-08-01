@@ -10,10 +10,10 @@ hero:
   actions:
     - theme: brand
       text: Conocer el producto
-      link: /docs/PRODUCT
+      link: /PRODUCT
     - theme: alt
       text: Ver arquitectura
-      link: /docs/ARCHITECTURE
+      link: /ARCHITECTURE
 
 features:
   - title: Experiencia serena
@@ -28,5 +28,5 @@ features:
 
 Las Fases 0 a 8 entregan el MVP 1.0: práctica, voz, revisión, progreso,
 aplicaciones móviles y materiales de publicación. Consulta el
-[caso de estudio](/docs/CASE_STUDY), la [guía de uso](/docs/USER_GUIDE), el
+[caso de estudio](/CASE_STUDY), la [guía de uso](/USER_GUIDE), el
 [estado actual](/CURRENT_STATUS) y las [tareas secuenciales](/TASKS).

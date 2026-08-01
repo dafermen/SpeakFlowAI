@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "vitepress build ..",
-    "dev": "vitepress .. --host 127.0.0.1 --port 5174",
-    "format": "prettier --check . ../.vitepress",
+    "dev": "vitepress build .. && vite preview .. --host 127.0.0.1 --port 5174 --strictPort",
+    "format": "prettier --check . ../.vitepress --ignore-path ../.gitignore",
     "lint": "eslint .",
     "preview": "vitepress preview ..",
     "test": "vitest run --passWithNoTests",
