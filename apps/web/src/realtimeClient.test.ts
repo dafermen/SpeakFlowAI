@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  fetchWithBrowserContext,
   interpretRealtimeEvent,
   normalizeRealtimeError,
   normalizeRealtimeStartError,
@@ -126,5 +127,19 @@ describe("Realtime event interpreter", () => {
         "webrtc-negotiation",
       ),
     ).toBe("webrtc_negotiation_failed");
+  });
+
+  it("calls browser fetch with the global receiver", async () => {
+    const receiverSensitiveFetch = function (this: unknown): Promise<Response> {
+      if (this !== globalThis) throw new TypeError("Illegal invocation");
+      return Promise.resolve(new Response(null, { status: 204 }));
+    } as unknown as typeof fetch;
+
+    const response = await fetchWithBrowserContext(
+      receiverSensitiveFetch,
+      "http://api.test/health",
+    );
+
+    expect(response.status).toBe(204);
   });
 });

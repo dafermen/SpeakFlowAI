@@ -24,17 +24,12 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**M1-T02 — Diagnosticar y recuperar fallos previos a la solicitud SDP.**
+**Ninguna. M1-T02 está completada.**
 
-El intento real del usuario no produjo ninguna solicitud al endpoint de sesión,
-por lo que el fallo está acotado a la captura del micrófono o la inicialización
-WebRTC en el navegador, antes del contacto con FastAPI y OpenAI.
-
-Windows detecta `Microphone Array`, los servicios de audio están activos y los
-permisos de escritorio/Codex están habilitados. El último intento abrió el
-micrófono durante 5 ms y lo cerró antes de enviar SDP. La nueva compilación
-clasifica cada etapa y reintenta restricciones incompatibles con audio básico;
-queda pendiente la repetición manual en el navegador del usuario.
+La causa raíz era invocar `window.fetch` como propiedad de la clase WebRTC. En
+Chrome esto cambia su receptor y produce `TypeError: Illegal invocation` antes
+de crear una solicitud de red. El cliente ahora ejecuta `fetch` con el contexto
+global del navegador y conserva los diagnósticos de micrófono y negociación.
 
 El cliente concede cuatro segundos de recuperación a una desconexión WebRTC
 transitoria y reserva el error inmediato para una conexión realmente fallida.
@@ -55,14 +50,15 @@ Mantenimiento M1-T01 del 2026-07-31:
 - Build de producción y presupuesto de bundle: aprobados.
 - No se persistió audio ni se expuso la clave del backend.
 
-Validación parcial M1-T02 del 2026-07-31:
+Mantenimiento M1-T02 del 2026-07-31:
 
-- API saludable, sin solicitudes SDP durante el fallo real observado.
+- Reproducción mínima: `fetch` directo 200 y llamada sin contexto `Illegal invocation`.
 - Micrófono presente, servicios de audio activos y privacidad habilitada.
 - Errores de micrófono, API y negociación clasificados sin datos sensibles.
 - Fallback automático de restricciones avanzadas a captura básica.
-- Cliente web: 13 pruebas aprobadas; lint, tipos, build y bundle aprobados.
-- Verificación manual con el micrófono real: pendiente.
+- Prueba completa de la interfaz en Chrome: `OPTIONS` 200, `POST` 200 y estado `Escuchando`.
+- Cliente web: 14 pruebas aprobadas; lint, tipos, build y bundle aprobados.
+- Audio personal: no grabado ni persistido.
 
 Auditoría de Fase 0 del 2026-07-30:
 

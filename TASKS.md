@@ -132,4 +132,4 @@ Una sola tarea puede estar `IN_PROGRESS`. La siguiente se desbloquea cuando la a
 | Orden | ID | Actividad/tarea | Estado |
 | ---: | --- | --- | --- |
 | 1 | M1-T01 | Corregir falsos cortes y diagnósticos genéricos en la sesión WebRTC | DONE |
-| 2 | M1-T02 | Diagnosticar y recuperar fallos previos a la solicitud SDP | IN_PROGRESS |
+| 2 | M1-T02 | Diagnosticar y recuperar fallos previos a la solicitud SDP | DONE |

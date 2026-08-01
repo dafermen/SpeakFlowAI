@@ -69,6 +69,11 @@ de ruido, el cliente vuelve a intentar una vez con `audio: true`. Si los registr
 de FastAPI no muestran `POST /api/v1/realtime/session`, el fallo ocurrió antes de
 OpenAI y se diagnostica en las etapas de micrófono o inicialización WebRTC.
 
+La función `fetch` del navegador se ejecuta explícitamente con `globalThis` como
+receptor. Guardar `window.fetch` como propiedad y llamarla mediante la instancia
+provoca `Illegal invocation` en Chrome y evita que la solicitud SDP llegue a la
+API, aunque el servicio local esté saludable.
+
 ## Configuración
 
 ```text

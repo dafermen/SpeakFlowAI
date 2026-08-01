@@ -93,6 +93,14 @@ export function normalizeRealtimeStartError(
   return "webrtc_initialization_failed";
 }
 
+export function fetchWithBrowserContext(
+  fetcher: typeof fetch,
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<Response> {
+  return fetcher.call(globalThis, input, init);
+}
+
 interface RealtimeServerEvent {
   type?: string;
   item_id?: string;
@@ -257,7 +265,8 @@ export class WebRtcRealtimeClient {
         voice_id: options.voiceId,
       });
       stage = "api-request";
-      const response = await this.fetcher(
+      const response = await fetchWithBrowserContext(
+        this.fetcher,
         `${this.apiBaseUrl}/api/v1/realtime/session?${query}`,
         {
           method: "POST",
