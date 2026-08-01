@@ -12,6 +12,9 @@ function createAppHomeLink(location: "desktop" | "mobile") {
       "aria-label": "Volver al inicio de SpeakFlowAI",
       class: ["app-home-link", `app-home-link--${location}`],
       href: "/",
+      // `target` hace que VitePress no intercepte este enlace como ruta documental.
+      // `_self` conserva la pestaña actual y deja que el navegador cargue la app.
+      target: "_self",
     },
     [
       h("span", { "aria-hidden": "true" }, "←"),

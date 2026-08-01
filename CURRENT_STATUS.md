@@ -24,7 +24,11 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T13 quedó completada.**
+**Ninguna. M1-T14 quedó completada.**
+
+VitePress interceptaba el enlace `/` como una ruta interna y el clic no salía
+del sitio documental. El enlace forzará navegación nativa en la misma pestaña,
+conservando la ruta de destino y la accesibilidad existentes.
 
 La navegación documental incorpora un enlace “Volver a la aplicación” con ruta
 directa al inicio de SpeakFlowAI. El control tendrá presentación adecuada tanto
@@ -68,6 +72,14 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T14 del 2026-08-01:
+
+- El enlace de regreso usa navegación nativa en la misma pestaña y ya no es
+  interceptado por el enrutador documental de VitePress.
+- Chrome pulsó automáticamente el control desde `/docs/ARCHITECTURE` y terminó
+  en `/`; la validación end-to-end fue aprobada.
+- Prettier, ESLint, tipos y build VitePress: aprobados.
 
 Mantenimiento M1-T13 del 2026-08-01:
 
