@@ -34,6 +34,20 @@ SCENARIO_INSTRUCTIONS = {
         "question at a time and invite concrete trade-offs and outcomes."
     ),
 }
+SCENARIO_VOCABULARY = {
+    "scenario.daily.coffee-shop": (
+        "coffee, cappuccino, latte, espresso, decaf, small, medium, and large"
+    ),
+    "scenario.workplace.daily-standup": (
+        "yesterday, today, priority, blocker, task, meeting, and deployment"
+    ),
+    "scenario.it-support.printer-offline": (
+        "printer, offline, restart, network, cable, driver, and settings"
+    ),
+    "scenario.interview.backend-role": (
+        "backend, API, database, scalability, latency, architecture, and trade-off"
+    ),
+}
 VOICE_MAP = {
     "voice-calm-1": "marin",
     "voice-warm-1": "cedar",
@@ -43,6 +57,16 @@ SPEED_MAP = {
     "normal": 1.0,
     "fast": 1.15,
 }
+
+
+def build_transcription_prompt(scenario_id: str) -> str:
+    vocabulary = SCENARIO_VOCABULARY[scenario_id]
+    return (
+        "Transcribe only the learner's spoken English. The learner may have a "
+        "Spanish accent. Do not translate the speech or rewrite it in another "
+        "language or script. Use the scenario context to resolve short or ambiguous "
+        f"phrases. Likely English vocabulary includes {vocabulary}."
+    )
 
 
 class SessionStartLimiter:
@@ -87,14 +111,16 @@ def build_session_config(
         "audio": {
             "input": {
                 "transcription": {
-                    "model": "gpt-4o-mini-transcribe",
+                    "model": settings.realtime_transcription_model,
                     "language": "en",
+                    "prompt": build_transcription_prompt(scenario_id),
                 },
+                "noise_reduction": {"type": "far_field"},
                 "turn_detection": {
                     "type": "server_vad",
-                    "threshold": 0.5,
+                    "threshold": 0.55,
                     "prefix_padding_ms": 300,
-                    "silence_duration_ms": 650,
+                    "silence_duration_ms": 750,
                 },
             },
             "output": {

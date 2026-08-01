@@ -134,3 +134,4 @@ Una sola tarea puede estar `IN_PROGRESS`. La siguiente se desbloquea cuando la a
 | 1 | M1-T01 | Corregir falsos cortes y diagnósticos genéricos en la sesión WebRTC | DONE |
 | 2 | M1-T02 | Diagnosticar y recuperar fallos previos a la solicitud SDP | DONE |
 | 3 | M1-T03 | Corregir el contexto de red al guardar sesiones y cargar progreso | DONE |
+| 4 | M1-T04 | Mejorar la precisión y el control de idioma de la transcripción de voz | DONE |

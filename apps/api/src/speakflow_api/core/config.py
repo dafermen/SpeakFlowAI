@@ -47,6 +47,7 @@ class Settings:
     database_url: str
     openai_api_key: str | None = field(default=None, repr=False)
     realtime_model: str = "gpt-realtime-2.1-mini"
+    realtime_transcription_model: str = "gpt-4o-transcribe"
     realtime_max_output_tokens: int = 350
     realtime_session_limit_minutes: int = 15
 
@@ -70,6 +71,10 @@ def load_settings() -> Settings:
         realtime_model=os.getenv(
             "SPEAKFLOW_REALTIME_MODEL",
             "gpt-realtime-2.1-mini",
+        ),
+        realtime_transcription_model=os.getenv(
+            "SPEAKFLOW_TRANSCRIPTION_MODEL",
+            "gpt-4o-transcribe",
         ),
         realtime_max_output_tokens=_bounded_int(
             "SPEAKFLOW_REALTIME_MAX_OUTPUT_TOKENS", 350, 50, 2_000

@@ -37,10 +37,7 @@ export interface RealtimeStartOptions {
 }
 
 export type RealtimeStartStage =
-  | "microphone"
-  | "webrtc-initialization"
-  | "api-request"
-  | "webrtc-negotiation";
+  "microphone" | "webrtc-initialization" | "api-request" | "webrtc-negotiation";
 
 const KNOWN_START_ERROR_CODES = new Set([
   "missing_sdp",
@@ -48,6 +45,28 @@ const KNOWN_START_ERROR_CODES = new Set([
   "session_limit",
   "session_start_failed",
 ]);
+
+const NON_ENGLISH_SCRIPT_PATTERNS = [
+  /\p{Script=Arabic}/u,
+  /\p{Script=Cyrillic}/u,
+  /\p{Script=Devanagari}/u,
+  /\p{Script=Han}/u,
+  /\p{Script=Hangul}/u,
+  /\p{Script=Hebrew}/u,
+  /\p{Script=Hiragana}/u,
+  /\p{Script=Katakana}/u,
+  /\p{Script=Thai}/u,
+];
+
+export function normalizeLearnerTranscript(transcript: string): string {
+  const normalized = transcript.trim();
+  if (
+    !NON_ENGLISH_SCRIPT_PATTERNS.some((pattern) => pattern.test(normalized))
+  ) {
+    return normalized;
+  }
+  return "No pude transcribir este turno en inglés. Inténtalo otra vez.";
+}
 
 function errorProperty(error: unknown, property: "message" | "name"): string {
   if (!error || typeof error !== "object" || !(property in error)) return "";
@@ -75,14 +94,20 @@ export function normalizeRealtimeStartError(
   }
 
   if (stage === "microphone") {
-    if (["NotAllowedError", "SecurityError", "PermissionDeniedError"].includes(errorName)) {
+    if (
+      ["NotAllowedError", "SecurityError", "PermissionDeniedError"].includes(
+        errorName,
+      )
+    ) {
       return "microphone_denied";
     }
     if (["NotFoundError", "DevicesNotFoundError"].includes(errorName)) {
       return "microphone_not_found";
     }
     if (shouldRetryBasicMicrophone(error)) return "microphone_constraints";
-    if (["NotReadableError", "TrackStartError", "AbortError"].includes(errorName)) {
+    if (
+      ["NotReadableError", "TrackStartError", "AbortError"].includes(errorName)
+    ) {
       return "microphone_unavailable";
     }
     return "microphone_unsupported";
@@ -120,7 +145,8 @@ interface RealtimeServerEvent {
 export function normalizeRealtimeError(
   error?: RealtimeServerEvent["error"],
 ): string {
-  const providerCode = `${error?.code ?? ""} ${error?.type ?? ""}`.toLowerCase();
+  const providerCode =
+    `${error?.code ?? ""} ${error?.type ?? ""}`.toLowerCase();
   if (providerCode.includes("rate_limit")) return "provider_rate_limit";
   if (
     providerCode.includes("quota") ||
@@ -158,7 +184,7 @@ export function interpretRealtimeEvent(event: RealtimeServerEvent): {
         transcript: {
           id: event.item_id ?? crypto.randomUUID(),
           speaker: "learner",
-          text: event.transcript ?? "",
+          text: normalizeLearnerTranscript(event.transcript ?? ""),
           final: true,
         },
       };
@@ -366,7 +392,10 @@ export class WebRtcRealtimeClient {
 
   private async requestMicrophone(): Promise<MediaStream> {
     if (!navigator.mediaDevices?.getUserMedia) {
-      throw new DOMException("Microphone capture is unavailable", "NotSupportedError");
+      throw new DOMException(
+        "Microphone capture is unavailable",
+        "NotSupportedError",
+      );
     }
 
     try {
@@ -383,9 +412,7 @@ export class WebRtcRealtimeClient {
     }
   }
 
-  private handleConnectionStateChange(
-    peerConnection: RTCPeerConnection,
-  ): void {
+  private handleConnectionStateChange(peerConnection: RTCPeerConnection): void {
     if (this.paused || this.peerConnection !== peerConnection) return;
 
     if (peerConnection.connectionState === "failed") {

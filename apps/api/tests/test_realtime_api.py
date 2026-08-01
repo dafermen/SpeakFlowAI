@@ -6,7 +6,11 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from speakflow_api.api.realtime import SessionStartLimiter, create_router
+from speakflow_api.api.realtime import (
+    SessionStartLimiter,
+    build_transcription_prompt,
+    create_router,
+)
 from speakflow_api.application.ports.realtime import RealtimeCall, RealtimeGatewayError
 from speakflow_api.core.config import Settings
 
@@ -74,7 +78,24 @@ def test_realtime_session_is_backend_mediated_and_cost_bounded(tmp_path: Path) -
     assert config["model"] == "gpt-realtime-2.1-mini"
     assert config["max_output_tokens"] == 350
     assert config["audio"]["output"] == {"voice": "marin", "speed": 0.85}
+    audio_input = config["audio"]["input"]
+    assert audio_input["transcription"]["model"] == "gpt-4o-transcribe"
+    assert audio_input["transcription"]["language"] == "en"
+    assert "Spanish accent" in audio_input["transcription"]["prompt"]
+    assert "cappuccino" in audio_input["transcription"]["prompt"]
+    assert audio_input["noise_reduction"] == {"type": "far_field"}
+    assert audio_input["turn_detection"]["threshold"] == 0.55
+    assert audio_input["turn_detection"]["silence_duration_ms"] == 750
     assert "coffee order" in config["instructions"]
+
+
+def test_transcription_prompt_uses_scenario_vocabulary() -> None:
+    prompt = build_transcription_prompt("scenario.it-support.printer-offline")
+
+    assert "spoken English" in prompt
+    assert "Do not translate" in prompt
+    assert "printer" in prompt
+    assert "cappuccino" not in prompt
 
 
 def test_realtime_returns_controlled_errors_without_leaking_secrets(tmp_path: Path) -> None:

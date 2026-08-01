@@ -31,7 +31,10 @@ sequenceDiagram
 
 ## Modelo y coste
 
-El valor predeterminado es `gpt-realtime-2.1-mini`, elegido para una primera experiencia sensible al coste. Puede cambiarse mediante `SPEAKFLOW_REALTIME_MODEL` sin modificar el frontend.
+El valor predeterminado de conversación es `gpt-realtime-2.1-mini`, elegido para
+una primera experiencia sensible al coste. La transcripción visible usa
+`gpt-4o-transcribe` para priorizar el reconocimiento de idioma y la precisión.
+Ambos pueden cambiarse desde el backend sin modificar el frontend.
 
 Controles activos:
 
@@ -40,10 +43,18 @@ Controles activos:
 - cinco inicios de sesión por proceso cada diez minutos;
 - respuestas de menos de 45 palabras mediante instrucciones;
 - VAD de servidor para evitar enviar silencio como turnos;
+- reducción de ruido `far_field` para el micrófono integrado;
+- inglés y vocabulario del escenario como contexto de transcripción;
 - lectura del uso desde eventos `response.done`;
 - botón explícito para terminar y cierre de pistas, canal y conexión.
 
 La [guía oficial de costes Realtime](https://developers.openai.com/api/docs/guides/realtime-costs) explica que cada turno reutiliza la conversación acumulada y que los turnos posteriores pueden ser más costosos. Por eso el MVP limita duración, salida y cantidad de reinicios.
+
+La transcripción de entrada se ejecuta de forma asíncrona y sirve como una
+aproximación de lo que oyó el modelo Realtime; no es una representación estricta
+de su audio interno. El idioma y el prompt ayudan, pero no fuerzan el resultado.
+Por eso el cliente también oculta resultados escritos en alfabetos incompatibles
+con la práctica en inglés y pide repetir el turno.
 
 ## Privacidad y seguridad
 
@@ -79,6 +90,7 @@ API, aunque el servicio local esté saludable.
 ```text
 OPENAI_API_KEY=<solo en el backend>
 SPEAKFLOW_REALTIME_MODEL=gpt-realtime-2.1-mini
+SPEAKFLOW_TRANSCRIPTION_MODEL=gpt-4o-transcribe
 SPEAKFLOW_REALTIME_MAX_OUTPUT_TOKENS=350
 SPEAKFLOW_REALTIME_SESSION_LIMIT_MINUTES=15
 ```
@@ -93,3 +105,8 @@ apertura del canal WebRTC en estado `connected/open`. Una prueba automatizada
 posterior envió una frase sintética como audio WebRTC y recibió la transcripción
 de salida de la respuesta. La comprobación audible con el micrófono real sigue
 siendo manual porque requiere la voz y los altavoces de la persona usuaria.
+
+El 2026-07-31 se reforzó el reconocimiento del alumno con inglés explícito,
+contexto por escenario, reducción de ruido de campo lejano, VAD menos sensible
+al ruido y `gpt-4o-transcribe`. La interfaz conserva texto inglés normal y
+reemplaza alfabetos incompatibles por una indicación para repetir.

@@ -24,7 +24,12 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T03 está completada.**
+**Ninguna. M1-T04 está completada.**
+
+La transcripción visible prioriza ahora el inglés con `gpt-4o-transcribe`,
+contexto por escenario, reducción de ruido de campo lejano y VAD ajustado. La
+interfaz conserva el inglés normal y pide repetir si el proveedor devuelve un
+alfabeto incompatible con la práctica.
 
 La voz real fue validada por el usuario. El cliente de datos ahora invoca `fetch`
 con el contexto global, la base SQLite de la raíz tiene las cuatro migraciones y
@@ -74,6 +79,18 @@ Mantenimiento M1-T03 del 2026-07-31:
 - Cliente API: 5 pruebas; web: 14 pruebas; backend: 21 pruebas aprobadas.
 - Ruff, formato Python, mypy, lint, tipos, builds y bundle: aprobados.
 - La sesión que originó el aviso quedó como copia local; no se fabricaron datos para reemplazarla.
+
+Mantenimiento M1-T04 del 2026-07-31:
+
+- La captura reportada contenía una frase en turco y otra en escritura coreana.
+- Transcripción: inglés explícito, vocabulario por escenario y modelo de mayor precisión.
+- Audio de entrada: reducción de ruido `far_field`, umbral VAD 0,55 y silencio de 750 ms.
+- Interfaz: alfabetos incompatibles se reemplazan por una indicación para repetir.
+- Backend: 22 pruebas; ruff, formato y mypy aprobados.
+- Web: 15 pruebas; Prettier, ESLint, tipos, build y bundle aprobados.
+- Documentación VitePress: build aprobado.
+- Chrome con audio simulado: sesión Realtime real aceptada por OpenAI (`PASS`).
+- No se usó, grabó ni persistió la voz de la persona usuaria.
 
 Auditoría de Fase 0 del 2026-07-30:
 

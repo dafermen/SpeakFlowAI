@@ -39,6 +39,15 @@ Es el comportamiento esperado. Los turnos crudos se descartan por defecto y el
 historial muestra métricas y feedback. Activa **Guardar transcripciones de
 práctica** antes de una sesión si deseas conservar su texto.
 
+## La transcripción aparece en otro idioma
+
+Las frases muy breves pueden ser ambiguas, especialmente con ruido, eco o un
+acento que el reconocedor aún no contextualizó. El idioma configurado es una
+guía, no un bloqueo absoluto. Habla cerca del micrófono, completa la frase y
+evita que los altavoces estén demasiado altos. Si SpeakFlowAI detecta un
+alfabeto incompatible con la práctica en inglés, mostrará una indicación para
+repetir en lugar del texto erróneo.
+
 ## Reiniciar el entorno de desarrollo
 
 Detén los procesos y vuelve a iniciar web, documentación y API usando los comandos

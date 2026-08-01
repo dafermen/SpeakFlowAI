@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   fetchWithBrowserContext,
   interpretRealtimeEvent,
+  normalizeLearnerTranscript,
   normalizeRealtimeError,
   normalizeRealtimeStartError,
   shouldRetryBasicMicrophone,
@@ -47,6 +48,18 @@ describe("Realtime event interpreter", () => {
         final: false,
       },
     });
+  });
+
+  it("replaces learner transcripts written in an incompatible script", () => {
+    expect(normalizeLearnerTranscript("카푸치노")).toBe(
+      "No pude transcribir este turno en inglés. Inténtalo otra vez.",
+    );
+    expect(normalizeLearnerTranscript("我要一杯咖啡")).toBe(
+      "No pude transcribir este turno en inglés. Inténtalo otra vez.",
+    );
+    expect(normalizeLearnerTranscript(" I would like a cappuccino. ")).toBe(
+      "I would like a cappuccino.",
+    );
   });
 
   it("extracts usage for cost visibility", () => {
@@ -100,7 +113,10 @@ describe("Realtime event interpreter", () => {
       ),
     ).toBe("microphone_not_found");
     expect(
-      normalizeRealtimeStartError(new TypeError("No mediaDevices"), "microphone"),
+      normalizeRealtimeStartError(
+        new TypeError("No mediaDevices"),
+        "microphone",
+      ),
     ).toBe("microphone_unsupported");
   });
 
@@ -119,7 +135,10 @@ describe("Realtime event interpreter", () => {
 
   it("classifies failures in each WebRTC startup stage", () => {
     expect(
-      normalizeRealtimeStartError(new TypeError("Failed to fetch"), "api-request"),
+      normalizeRealtimeStartError(
+        new TypeError("Failed to fetch"),
+        "api-request",
+      ),
     ).toBe("api_unreachable");
     expect(
       normalizeRealtimeStartError(
