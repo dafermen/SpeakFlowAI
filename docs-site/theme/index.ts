@@ -2,6 +2,7 @@ import type { Theme } from "vitepress";
 import DefaultTheme from "vitepress/theme";
 import { h } from "vue";
 
+import MermaidDiagram from "./MermaidDiagram.vue";
 import "./custom.css";
 
 /** Crea el enlace que sale de la documentación y vuelve a la aplicación. */
@@ -26,6 +27,9 @@ function createAppHomeLink(location: "desktop" | "mobile") {
 /** Extiende VitePress con una salida visible hacia la aplicación web. */
 export default {
   extends: DefaultTheme,
+  enhanceApp({ app }) {
+    app.component("MermaidDiagram", MermaidDiagram);
+  },
   Layout: () =>
     h(DefaultTheme.Layout, null, {
       "nav-bar-content-after": () => createAppHomeLink("desktop"),

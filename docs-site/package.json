@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vitepress build ..",
+    "build": "vitepress build .. && node scripts/check-bundle.mjs",
+    "check:bundle": "node scripts/check-bundle.mjs",
     "dev": "vitepress build .. && vite preview .. --host 127.0.0.1 --port 5174 --strictPort",
     "format": "prettier --check . ../.vitepress --ignore-path ../.gitignore",
     "lint": "eslint .",
@@ -14,8 +15,7 @@
   },
   "dependencies": {
     "mermaid": "^11.16.0",
-    "vitepress": "^1.6.4",
-    "vitepress-plugin-mermaid": "^2.0.17"
+    "vitepress": "^1.6.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

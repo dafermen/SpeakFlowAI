@@ -24,7 +24,11 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T15 quedó completada.**
+**Ninguna. M1-T16 quedó completada.**
+
+La documentación carga Mermaid únicamente al abrir una página con diagramas. El
+componente local muestra estados comprensibles, conserva tema claro/oscuro y
+asigna a cada gráfico una etiqueta accesible basada en el encabezado anterior.
 
 Los documentos movidos accidentalmente regresaron a sus ubicaciones registradas
 sin pérdida de contenido. `pnpm start` inicia web, API y documentación desde una
@@ -76,6 +80,18 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T16 del 2026-09-09:
+
+- Mermaid dejó de formar parte del archivo de entrada documental: pasó de
+  aproximadamente 624 kB a 1,3 kB y se carga solo donde existe un diagrama.
+- La portada carga 170.437 bytes de JavaScript y 108.027 bytes de CSS; un
+  presupuesto automatizado evita futuras regresiones y la precarga de Mermaid.
+- Los diagramas tienen estados accesibles de carga/error y una etiqueta derivada
+  del encabezado de su sección.
+- Chrome renderizó un SVG real sin estado pendiente ni error y confirmó la
+  etiqueta contextual accesible.
+- Prettier, ESLint, tipos, pruebas, build VitePress y presupuesto: aprobados.
 
 Mantenimiento M1-T15 del 2026-09-09:
 
