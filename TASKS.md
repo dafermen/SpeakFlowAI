@@ -145,3 +145,4 @@ Una sola tarea puede estar `IN_PROGRESS`. La siguiente se desbloquea cuando la a
 |    12 | M1-T12 | Corregir la carga local de la documentación en navegadores externos      | DONE   |
 |    13 | M1-T13 | Añadir regreso visible desde la documentación a la aplicación            | DONE   |
 |    14 | M1-T14 | Corregir la acción del enlace de regreso a la aplicación                 | DONE   |
+|    15 | M1-T15 | Restaurar documentos y unificar el arranque local                        | DONE   |

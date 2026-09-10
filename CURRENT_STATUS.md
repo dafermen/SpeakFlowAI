@@ -24,7 +24,11 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T14 quedó completada.**
+**Ninguna. M1-T15 quedó completada.**
+
+Los documentos movidos accidentalmente regresaron a sus ubicaciones registradas
+sin pérdida de contenido. `pnpm start` inicia web, API y documentación desde una
+sola terminal, con la web en el puerto `4173`.
 
 VitePress interceptaba el enlace `/` como una ruta interna y el clic no salía
 del sitio documental. El enlace forzará navegación nativa en la misma pestaña,
@@ -72,6 +76,17 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T15 del 2026-09-09:
+
+- Diecinueve documentos movidos por accidente regresaron a la raíz y
+  `docs/README.md` fue restaurado; Git no conserva eliminaciones ni duplicados.
+- `pnpm start` administra React/Vite `4173`, FastAPI `8000` y VitePress `5174`
+  desde una sola terminal; `Ctrl + C` cierra el conjunto.
+- `.env` se carga únicamente en el backend y sus valores nunca se imprimen.
+- `pnpm start:check` valida entorno y puertos antes de iniciar.
+- Web, API y documentación respondieron HTTP 200; voz Realtime disponible.
+- Script Node, Prettier, ESLint, tipos y build VitePress: aprobados.
 
 Mantenimiento M1-T14 del 2026-08-01:
 

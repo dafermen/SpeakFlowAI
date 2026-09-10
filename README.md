@@ -56,17 +56,21 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".\apps\api[dev]"
 ```
 
-Aplicación y documentación:
+Toda la aplicación (web, API y documentación) desde una sola terminal:
 
 ```powershell
-pnpm dev
+pnpm start
 ```
 
-API, en otra terminal:
+Rutas locales:
 
-```powershell
-.\.venv\Scripts\python.exe -m uvicorn speakflow_api.main:app --app-dir apps/api/src --reload --port 8000
-```
+- Aplicación: `http://127.0.0.1:4173/`
+- Documentación: `http://127.0.0.1:4173/docs/`
+- API: `http://127.0.0.1:8000/`
+
+El iniciador carga `.env` únicamente en el backend. Presiona `Ctrl + C` para
+cerrar los tres servicios. Puedes comprobar dependencias y puertos sin iniciar
+nada mediante `pnpm start:check`.
 
 Migración local:
 

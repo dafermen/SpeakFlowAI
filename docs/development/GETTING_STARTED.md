@@ -27,25 +27,25 @@ python3.12 -m venv .venv
 ./.venv/bin/python -m pip install -e "./apps/api[dev]"
 ```
 
-## Ejecutar
+## Ejecutar toda la aplicación
 
-Web y documentación:
+Desde la raíz del repositorio:
 
-```text
-pnpm dev
+```powershell
+pnpm start
 ```
 
-- Web: `http://127.0.0.1:5173`
-- Documentación: `http://127.0.0.1:5174/docs/`
-- El enlace `/docs/` de la web se redirige al servidor documental durante desarrollo.
+- Web: `http://127.0.0.1:4173/`
+- API: `http://127.0.0.1:8000/`
+- Documentación: `http://127.0.0.1:4173/docs/`
 
-API:
+El comando carga `.env` solo para el proceso del backend y mantiene los tres
+servicios en una terminal. Presiona `Ctrl + C` para cerrarlos juntos. Antes de
+arrancar puedes comprobar dependencias y puertos disponibles:
 
-```text
-python -m uvicorn speakflow_api.main:app --app-dir apps/api/src --reload --port 8000
+```powershell
+pnpm start:check
 ```
-
-Usa el ejecutable Python de `.venv` en tu plataforma.
 
 ## Voz Realtime opcional
 
