@@ -8,12 +8,12 @@ version = "1.0.0"
 description = "FastAPI backend for SpeakFlowAI."
 requires-python = ">=3.12"
 dependencies = [
-  "alembic>=1.18.5,<1.19",
+  "alembic>=1.18.5,<1.21",
   "fastapi>=0.141.1,<0.142",
   "httpx>=0.28.1,<0.29",
   "pydantic>=2.13.4,<3",
-  "sqlalchemy>=2.0.51,<2.1",
-  "uvicorn[standard]>=0.52.0,<0.53",
+  "sqlalchemy>=2.0.51,<2.2",
+  "uvicorn[standard]>=0.52.0,<0.55",
 ]
 
 [project.optional-dependencies]
