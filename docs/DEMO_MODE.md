@@ -57,7 +57,7 @@ The application remains personal, not multi-user. OpenAI stays backend-only; dis
 
 ## Versioned deployment component
 
-The source, tests and secret-free template are in [deploy/demo-access](../deploy/demo-access/README.md).
+The source, tests and secret-free template are in [deploy/demo-access on GitHub](https://github.com/dafermen/SpeakFlowAI/tree/main/deploy/demo-access).
 Node.js 24 is required. The same component is mirrored in the four project repositories;
 the VPS runs **one shared instance**, not one per application. Keep the five runtime
 files synchronized when updating the component. `config.example.json` is a one-site
