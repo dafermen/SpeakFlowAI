@@ -402,3 +402,7 @@ Source, blank template and five passing security/configuration tests are version
 under `deploy/demo-access`. See `docs/DEMO_MODE.md` and its ADR for operations,
 rollback and limits. This documentation release does not accept unrelated tasks,
 publish pending app development, enable email invitations or alter pilot expiry.
+
+## DOC-STD-20261002 — Organización documental
+
+El índice existente ahora identifica fuentes canónicas y recorridos de usuario, desarrollo y operación, con acceso desde VitePress. Se corrigió una descripción futura de un portal ya implementado. Se mantienen los límites del modelo personal, la configuración independiente de DEMO_MODE y las validaciones externas pendientes.

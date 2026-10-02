@@ -6,6 +6,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: "Producto",
       items: [
         { text: "Introducción", link: "/" },
+        { text: "Mapa documental", link: "/README" },
         { text: "Definición", link: "/PRODUCT" },
         { text: "Alcance MVP", link: "/MVP_SCOPE" },
         { text: "Recorridos", link: "/USER_JOURNEYS" },
