@@ -390,3 +390,15 @@ Puerta de Fase 8 del 2026-07-31:
 - Auditoría Node: 0 vulnerabilidades conocidas; `pip check`: aprobado.
 - Escaneo final: 0 credenciales reales; solo un ejemplo explícito de placeholder.
 - Workflow de GitHub Pages, rollback y paquete de hosting privado: preparados.
+
+## DEMO-ENV-20261002 — Optional portfolio entry gate
+
+The owner authorized publication and test-server deployment of the external demo
+gateway and its documentation. `DEMO_MODE=true|false` and private `DEMO_PASSWORD`
+are read from a separate server env file, not the root local-development env.
+The current test deployment stays protected with the existing keys. The gateway
+retains server-side verification, host-bound sessions and native app permissions.
+Source, blank template and five passing security/configuration tests are versioned
+under `deploy/demo-access`. See `docs/DEMO_MODE.md` and its ADR for operations,
+rollback and limits. This documentation release does not accept unrelated tasks,
+publish pending app development, enable email invitations or alter pilot expiry.

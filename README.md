@@ -130,3 +130,11 @@ confidenciales ni identificadores reales. Consulta [SECURITY.md](SECURITY.md) y
 ## Licencia
 
 MIT. Consulta [la licencia](docs/LICENSE.md).
+
+## Portfolio demo access
+
+[Open the protected demo](https://speakflowai.innovalogic.tech/). The external test-server
+gateway supports optional `DEMO_MODE` and private `DEMO_PASSWORD` settings.
+See [configuration and limits](docs/DEMO_MODE.md) and the
+[secret-free env template](deploy/demo-access/.env.example). These settings belong
+to the server gateway; the local application does not read them automatically.

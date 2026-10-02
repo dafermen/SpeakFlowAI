@@ -1,0 +1,6 @@
+{
+  "speakflowai.innovalogic.tech": {
+    "name": "SpeakFlowAI",
+    "envFile": ".env"
+  }
+}
