@@ -4,8 +4,9 @@
 
 **Contenido publicado en `dafermen/SpeakFlowAI`.** La entrega usa ejemplos y
 capturas sintéticas, incluye licencia y políticas, y pasó las revisiones
-automatizadas y manuales de Fase 8 y M1-T18. GitHub Pages requiere habilitar
-**GitHub Actions** como origen en la configuración del repositorio.
+automatizadas y manuales de Fase 8 y M1-T18. El workflow de GitHub Pages es
+manual: antes de ejecutarlo hay que habilitar **GitHub Actions** como origen en
+la configuración del repositorio.
 
 ## Contenido prohibido
 
@@ -65,7 +66,8 @@ La documentación y el backend se despliegan como unidades separadas aunque comp
 - CI rápida: formato, lint, tipos, pruebas y builds.
 - Dependabot para los manifests de dependencias.
 - CodeQL/análisis de dependencias y secret scanning según disponibilidad.
-- Workflow de Pages en `.github/workflows/pages.yml`.
+- Workflow manual de Pages en `.github/workflows/pages.yml`; no intenta publicar
+  hasta que Pages esté habilitado expresamente.
 - Workflow de release solo cuando haya artefactos versionados.
 
 No se crean workflows que simulen una validación inexistente.

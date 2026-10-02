@@ -104,6 +104,8 @@ Mantenimiento M1-T18 del 2026-10-01:
   nativa.
 - Cinco capturas reales y reproducibles fueron revisadas visualmente. Usan datos
   sintéticos, no muestran elementos del navegador y cubren escritorio y móvil.
+- El workflow de Pages queda manual porque el repositorio aún no tiene ese
+  servicio habilitado; no se activó un despliegue externo sin autorización.
 - Se excluyeron por instrucción explícita las pruebas físicas de dispositivos,
   la compilación/firma iOS y la creación de tag o release.
 
