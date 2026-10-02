@@ -2,7 +2,7 @@
 
 Fecha de ejecución: 2026-07-31
 
-Última actualización técnica: 2026-10-01 (M1-T17).
+Última actualización técnica: 2026-10-01 (M1-T18).
 
 ## Resultado
 
@@ -14,8 +14,8 @@ en Windows, Node.js 24 y Python 3.12 sobre el proyecto canónico.
 | Formato             | Prettier y Ruff                      | Aprobado                     |
 | Estático            | ESLint, Ruff y mypy estricto         | Aprobado                     |
 | Tipos               | TypeScript por workspace             | Aprobado                     |
-| Backend             | 19 pruebas                           | Aprobado                     |
-| TypeScript          | 24 pruebas                           | Aprobado                     |
+| Backend             | 23 pruebas                           | Aprobado                     |
+| TypeScript          | 41 pruebas                           | Aprobado                     |
 | Fuzz determinista   | 200 entradas Unicode generadas       | Aprobado                     |
 | Contrato            | OpenAPI y rutas MVP                  | Aprobado                     |
 | Migraciones         | upgrade/downgrade y claves foráneas  | Aprobado                     |
@@ -23,7 +23,7 @@ en Windows, Node.js 24 y Python 3.12 sobre el proyecto canónico.
 | Dependencias Python | `pip check`                          | Sin incompatibilidades       |
 | Dependencias Node   | `pnpm audit --audit-level high`      | 0 vulnerabilidades conocidas |
 | Build               | React y VitePress                    | Aprobado                     |
-| Bundle web          | JS 312,81 kB; CSS 25,19 kB           | Dentro de 400/60 kB          |
+| Bundle web          | JS 384,54 kB; CSS 28,43 kB           | Dentro de 400/60 kB          |
 | Rendimiento API     | 500 solicitudes in-process           | p50 3,408 ms; p95 5,066 ms   |
 | Secretos            | búsqueda de patrones sensibles       | Sin claves reales detectadas |
 
@@ -35,6 +35,8 @@ en Windows, Node.js 24 y Python 3.12 sobre el proyecto canónico.
 - Configuración de duración y tokens acotada incluso ante variables inválidas.
 - Auditoría de producción y presupuesto de bundle en CI.
 - Resolución de Vite 6.4.3 para corregir la dependencia vulnerable de VitePress.
+- Resolución de `uuid` 11.1.1 para la cadena de herramientas de Capacitor/Xcode.
+- Capturas reproducibles en Chrome aislado con datos totalmente sintéticos.
 
 ## Accesibilidad
 

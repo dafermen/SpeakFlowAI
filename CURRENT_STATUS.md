@@ -4,9 +4,9 @@
 
 **MVP 1.0 completado**
 
-Las Fases 0 a 8 están completas. La prueba con proveedor real, la firma iOS y
-la publicación pública en GitHub siguen como validaciones externas que no
-invalidan la entrega reproducible.
+Las Fases 0 a 8 están completas. La prueba con proveedor real y la firma iOS
+siguen como validaciones externas que no invalidan la entrega reproducible. El
+repositorio público está preparado en `dafermen/SpeakFlowAI`.
 
 ## Estado de calidad
 
@@ -24,7 +24,12 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T17 quedó completada.**
+**Sin tarea de desarrollo activa. M1-T18 completada; pendiente revisión humana.**
+
+El repositorio público indicado por la persona usuaria quedó conectado a
+`https://github.com/dafermen/SpeakFlowAI`. La versión estable incluye capturas
+reales con el perfil ficticio “Alex”, dependencias actualizadas y documentación
+de instalación, arquitectura, seguridad y uso.
 
 `httpx2` forma parte del entorno de desarrollo requerido por Starlette,
 mientras `httpx` permanece en producción para el adaptador de OpenAI. La
@@ -85,6 +90,22 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T18 del 2026-10-01:
+
+- El historial y los archivos rastreados no contienen claves, tokens, bases de
+  datos ni archivos `.env`; las cuatro coincidencias genéricas revisadas son
+  lectura de configuración, un valor de prueba y marcadores documentales.
+- `pnpm audit` informa cero vulnerabilidades conocidas después de actualizar
+  React, Vite, Capacitor y herramientas compatibles, y resolver `uuid` 11.1.1
+  en la cadena de Xcode.
+- 41 pruebas TypeScript y 23 pruebas backend aprobadas; también pasaron formato,
+  lint, tipos, Ruff, mypy, `pip check`, builds, presupuestos y configuración
+  nativa.
+- Cinco capturas reales y reproducibles fueron revisadas visualmente. Usan datos
+  sintéticos, no muestran elementos del navegador y cubren escritorio y móvil.
+- Se excluyeron por instrucción explícita las pruebas físicas de dispositivos,
+  la compilación/firma iOS y la creación de tag o release.
 
 Mantenimiento M1-T17 del 2026-10-01:
 

@@ -2,7 +2,7 @@
 
 ## Estado
 
-SpeakFlowAI usa Capacitor 8.4.2. Los proyectos están en:
+SpeakFlowAI usa Capacitor 8.5.2. Los proyectos están en:
 
 - Android: `apps/web/android`;
 - iOS: `apps/web/ios`.

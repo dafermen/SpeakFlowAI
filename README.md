@@ -2,6 +2,19 @@
 
 SpeakFlowAI es un compañero de voz con IA para que una persona adulta practique inglés con menos ansiedad, objetivos claros y retroalimentación útil. El MVP es una aplicación personal, local y sin autenticación.
 
+<p align="center">
+  <img src="docs/assets/screenshots/home-desktop.png" alt="Inicio de SpeakFlowAI con una práctica de inglés recomendada para el perfil ficticio Alex" width="100%">
+</p>
+
+## Qué incluye
+
+- conversación por voz en tiempo real, mediada por el backend para proteger la clave;
+- modo escrito local y determinista cuando no se desea usar el proveedor de voz;
+- escenarios de vida diaria, trabajo, soporte técnico y entrevistas;
+- revisión con fortalezas, enfoque, vocabulario y frases reutilizables;
+- progreso local sin cuenta y sin conservar audio;
+- interfaz responsive, documentación navegable y proyectos Capacitor para Android e iOS.
+
 ## Estado
 
 Las **Fases 0 a 8** están completas y conforman la versión **1.0.0**. La
@@ -22,17 +35,17 @@ progreso, proyectos móviles y un paquete de publicación.
 
 ## Decisiones principales del MVP
 
-| Tema           | Decisión                                                                                                |
-| -------------- | ------------------------------------------------------------------------------------------------------- |
-| Base de datos  | SQLite mediante SQLAlchemy 2.x y migraciones Alembic                                                    |
-| Evolución      | Repositorios y tipos portables para facilitar la futura migración a PostgreSQL                          |
-| Identidad      | Un perfil local; sin login, registro, OAuth ni roles                                                    |
-| Preferencias   | Adaptador LocalStorage tipado, versionado y validado                                                    |
-| Contenido      | JSON Schema para modos, escenarios y contenido estático                                                 |
-| Voz            | Integración en una fase posterior, mediada por FastAPI; nunca se expone la clave de OpenAI al navegador |
-| Aplicación web | React, responsive y mobile-first; base preparada para Capacitor                                         |
-| Documentación  | Markdown/MDX generado como HTML estático con VitePress                                                  |
-| Pruebas        | Pruebas enfocadas en cada iteración; puerta completa en endurecimiento previo a producción              |
+| Tema           | Decisión                                                                                   |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| Base de datos  | SQLite mediante SQLAlchemy 2.x y migraciones Alembic                                       |
+| Evolución      | Repositorios y tipos portables para facilitar la futura migración a PostgreSQL             |
+| Identidad      | Un perfil local; sin login, registro, OAuth ni roles                                       |
+| Preferencias   | Adaptador LocalStorage tipado, versionado y validado                                       |
+| Contenido      | JSON Schema para modos, escenarios y contenido estático                                    |
+| Voz            | OpenAI Realtime mediante FastAPI; la clave nunca se expone al navegador                    |
+| Aplicación web | React, responsive y mobile-first; base preparada para Capacitor                            |
+| Documentación  | Markdown/MDX generado como HTML estático con VitePress                                     |
+| Pruebas        | Pruebas enfocadas en cada iteración; puerta completa en endurecimiento previo a producción |
 
 ## Secuencia obligatoria
 
@@ -45,6 +58,23 @@ externas pendientes se conservan en [TASKS.md](TASKS.md).
 El repositorio incluye React/FastAPI, SQLite/Alembic, voz Realtime, preferencias
 locales, contenido JSON validado, sistema visual, Capacitor, documentación
 VitePress, CI y una experiencia completa con fallback local.
+
+## Vistas reales del producto
+
+Las imágenes siguientes fueron generadas desde la aplicación en ejecución con el
+perfil ficticio **Alex** y conversaciones sintéticas. No contienen credenciales,
+datos personales ni elementos del navegador.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/assets/screenshots/practice-catalog.png" alt="Catálogo de prácticas de SpeakFlowAI"></td>
+    <td width="50%"><img src="docs/assets/screenshots/conversation-desktop.png" alt="Conversación escrita de práctica en SpeakFlowAI"></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/assets/screenshots/review-desktop.png" alt="Revisión posterior a una sesión de SpeakFlowAI"></td>
+    <td width="50%" align="center"><img src="docs/assets/screenshots/home-mobile.png" alt="Inicio mobile-first de SpeakFlowAI" width="280"></td>
+  </tr>
+</table>
 
 ## Inicio local
 
@@ -66,7 +96,7 @@ Rutas locales:
 
 - Aplicación: `http://127.0.0.1:4173/`
 - Documentación: `http://127.0.0.1:4173/docs/`
-- API: `http://127.0.0.1:8000/`
+- Salud de la API: `http://127.0.0.1:8000/api/v1/health`
 
 El iniciador carga `.env` únicamente en el backend. Presiona `Ctrl + C` para
 cerrar los tres servicios. Puedes comprobar dependencias y puertos sin iniciar
@@ -90,7 +120,12 @@ estudiar el sistema sin leer los archivos al azar, comienza por el
 
 ## Seguridad
 
-No agregues claves, transcripciones personales, audio, datos empresariales confidenciales ni identificadores reales. Consulta [SECURITY.md](SECURITY.md) y [docs/GITHUB_PUBLICATION.md](docs/GITHUB_PUBLICATION.md).
+La clave `OPENAI_API_KEY` se lee exclusivamente en FastAPI desde un `.env` local
+ignorado por Git. La publicación fue revisada contra patrones de secretos, bases
+de datos y archivos sensibles; `pnpm audit` no reporta vulnerabilidades conocidas.
+No agregues claves, transcripciones personales, audio, datos empresariales
+confidenciales ni identificadores reales. Consulta [SECURITY.md](SECURITY.md) y
+[la guía de publicación](docs/GITHUB_PUBLICATION.md).
 
 ## Licencia
 

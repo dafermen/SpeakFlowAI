@@ -2,10 +2,10 @@
 
 ## Estado de versión 1.0
 
-**Contenido aprobado para publicación; repositorio remoto aún no conectado.** La
-entrega usa ejemplos sintéticos, incluye licencia y políticas, y pasó las
-revisiones automatizadas y manuales de Fase 8. Publicar en GitHub requiere elegir
-o crear el repositorio remoto y habilitar Pages con GitHub Actions.
+**Contenido publicado en `dafermen/SpeakFlowAI`.** La entrega usa ejemplos y
+capturas sintéticas, incluye licencia y políticas, y pasó las revisiones
+automatizadas y manuales de Fase 8 y M1-T18. GitHub Pages requiere habilitar
+**GitHub Actions** como origen en la configuración del repositorio.
 
 ## Contenido prohibido
 
@@ -33,16 +33,16 @@ Todos los ejemplos usan compañías, instalaciones, personas, incidentes e ident
 
 ## Checklist antes de cada publicación
 
-- [ ] Buscar patrones de secretos y archivos sensibles en todo el historial a publicar.
-- [ ] Revisar nombres propios, dominios, IP, IDs, tickets y metadatos de capturas.
-- [ ] Confirmar que ninguna base de datos o archivo auxiliar está rastreado.
-- [ ] Revisar licencias de dependencias y activos.
-- [ ] Ejecutar build reproducible desde un clon limpio.
-- [ ] Ejecutar tests correspondientes a la fase.
-- [ ] Revisar documentación, enlaces y base path.
-- [ ] Confirmar que ejemplos y screenshots son sintéticos.
-- [ ] Documentar variables de entorno sin valores reales.
-- [ ] Revisar changelog, políticas y responsable de seguridad.
+- [x] Buscar patrones de secretos y archivos sensibles en todo el historial a publicar.
+- [x] Revisar nombres propios, dominios, IP, IDs, tickets y metadatos de capturas.
+- [x] Confirmar que ninguna base de datos o archivo auxiliar está rastreado.
+- [x] Revisar licencias de dependencias y activos.
+- [x] Ejecutar build reproducible y puerta completa de calidad.
+- [x] Ejecutar tests correspondientes a la versión.
+- [x] Revisar documentación, enlaces y base path.
+- [x] Confirmar que ejemplos y screenshots son sintéticos.
+- [x] Documentar variables de entorno sin valores reales.
+- [x] Revisar changelog, políticas y responsable de seguridad.
 
 ## GitHub Pages
 
@@ -72,7 +72,8 @@ No se crean workflows que simulen una validación inexistente.
 
 ## Capturas y portfolio
 
-- Perfiles y sesiones ficticios.
+- Las capturas versionadas están en `docs/assets/screenshots/`.
+- El perfil “Alex” y todas las sesiones son ficticios.
 - Relojes, redes y notificaciones del dispositivo recortados cuando puedan identificar.
 - Sin logos o UI copiados de aplicaciones comerciales.
 - Texto alternativo para imágenes.
@@ -90,6 +91,7 @@ No basta con borrar un secreto del último commit.
 
 ## Criterio de aprobación pública
 
-La Fase 8 confirmó cero credenciales reales detectadas, licencias compatibles,
-documentación construible, datos sintéticos y políticas vigentes. El estado es
-“aprobado para publicar; falta conectar el destino externo”.
+La Fase 8 y M1-T18 confirmaron cero credenciales reales detectadas, cero
+vulnerabilidades conocidas en `pnpm audit`, licencias compatibles, documentación
+construible, datos sintéticos y políticas vigentes. El contenido está aprobado
+para publicarse en `https://github.com/dafermen/SpeakFlowAI`.

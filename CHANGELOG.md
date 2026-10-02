@@ -2,6 +2,19 @@
 
 Los cambios notables seguirán una versión simplificada de Keep a Changelog y versionado semántico cuando exista software publicable.
 
+## [Unreleased]
+
+### Changed
+
+- Dependencias web, documentación y Capacitor actualizadas a versiones estables compatibles.
+- README público ampliado con características, instrucciones y capturas reales de la aplicación.
+
+### Security
+
+- Auditoría del árbol Node sin vulnerabilidades conocidas.
+- Auditoría de secretos en archivos rastreados y en el historial sin hallazgos.
+- `uuid` actualizado mediante override para corregir la cadena transitiva de Capacitor/Xcode.
+
 ## [1.0.0] - 2026-07-31
 
 ### Added

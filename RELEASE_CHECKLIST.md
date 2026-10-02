@@ -17,7 +17,7 @@
 - [ ] Compilar y firmar iOS en macOS/Xcode.
 - [ ] Ejecutar matriz física Android/iOS y lector de pantalla.
 - [ ] Configurar backend HTTPS y `VITE_API_BASE_URL` para distribución.
-- [ ] Crear o conectar repositorio remoto público.
+- [x] Preparar y conectar el repositorio remoto de GitHub.
 - [ ] Habilitar GitHub Pages con GitHub Actions.
 - [ ] Crear tag `v1.0.0` y publicar estas release notes.
 

@@ -148,3 +148,4 @@ Una sola tarea puede estar `IN_PROGRESS`. La siguiente se desbloquea cuando la a
 |    15 | M1-T15 | Restaurar documentos y unificar el arranque local                        | DONE   |
 |    16 | M1-T16 | Cargar diagramas bajo demanda y mejorar su estado accesible              | DONE   |
 |    17 | M1-T17 | Actualizar dependencias de pruebas y reconciliar evidencia técnica       | DONE   |
+|    18 | M1-T18 | Auditar seguridad, añadir capturas y publicar el repositorio en GitHub   | DONE   |
