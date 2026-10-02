@@ -2,28 +2,30 @@
 
 Fecha de ejecución: 2026-07-31
 
+Última actualización técnica: 2026-10-01 (M1-T17).
+
 ## Resultado
 
 La puerta automatizable de Fase 6 está aprobada. Las validaciones se ejecutaron
 en Windows, Node.js 24 y Python 3.12 sobre el proyecto canónico.
 
-| Área | Evidencia | Resultado |
-| --- | --- | --- |
-| Formato | Prettier y Ruff | Aprobado |
-| Estático | ESLint, Ruff y mypy estricto | Aprobado |
-| Tipos | TypeScript por workspace | Aprobado |
-| Backend | 19 pruebas | Aprobado |
-| TypeScript | 24 pruebas | Aprobado |
-| Fuzz determinista | 200 entradas Unicode generadas | Aprobado |
-| Contrato | OpenAPI y rutas MVP | Aprobado |
-| Migraciones | upgrade/downgrade y claves foráneas | Aprobado |
-| Resiliencia | voz, API offline, fallback y límites | Aprobado |
-| Dependencias Python | `pip check` | Sin incompatibilidades |
-| Dependencias Node | `pnpm audit --audit-level high` | 0 vulnerabilidades conocidas |
-| Build | React y VitePress | Aprobado |
-| Bundle web | JS 312,81 kB; CSS 25,19 kB | Dentro de 400/60 kB |
-| Rendimiento API | 500 solicitudes in-process | p50 3,408 ms; p95 5,066 ms |
-| Secretos | búsqueda de patrones sensibles | Sin claves reales detectadas |
+| Área                | Evidencia                            | Resultado                    |
+| ------------------- | ------------------------------------ | ---------------------------- |
+| Formato             | Prettier y Ruff                      | Aprobado                     |
+| Estático            | ESLint, Ruff y mypy estricto         | Aprobado                     |
+| Tipos               | TypeScript por workspace             | Aprobado                     |
+| Backend             | 19 pruebas                           | Aprobado                     |
+| TypeScript          | 24 pruebas                           | Aprobado                     |
+| Fuzz determinista   | 200 entradas Unicode generadas       | Aprobado                     |
+| Contrato            | OpenAPI y rutas MVP                  | Aprobado                     |
+| Migraciones         | upgrade/downgrade y claves foráneas  | Aprobado                     |
+| Resiliencia         | voz, API offline, fallback y límites | Aprobado                     |
+| Dependencias Python | `pip check`                          | Sin incompatibilidades       |
+| Dependencias Node   | `pnpm audit --audit-level high`      | 0 vulnerabilidades conocidas |
+| Build               | React y VitePress                    | Aprobado                     |
+| Bundle web          | JS 312,81 kB; CSS 25,19 kB           | Dentro de 400/60 kB          |
+| Rendimiento API     | 500 solicitudes in-process           | p50 3,408 ms; p95 5,066 ms   |
+| Secretos            | búsqueda de patrones sensibles       | Sin claves reales detectadas |
 
 ## Controles incorporados
 
@@ -44,9 +46,10 @@ se registra como validación manual previa a una distribución pública.
 
 ## Notas aceptadas
 
-- VitePress emite una advertencia de chunk documental superior a 500 kB debido a
-  Mermaid. No afecta el bundle de la aplicación y el sitio genera correctamente.
-- Starlette avisa de la transición futura de su cliente de pruebas hacia
-  `httpx2`; no altera resultados. Debe atenderse al actualizar FastAPI.
-- La prueba con proveedor de voz real requiere una credencial local y permanece
-  fuera de la automatización para evitar coste y exposición.
+- Mermaid se carga bajo demanda desde M1-T16. La portada tiene un presupuesto
+  automático y ya no incluye el motor de diagramas en su descarga inicial.
+- Starlette usa `httpx2` para `TestClient`; SpeakFlowAI lo declara solo para
+  desarrollo. El adaptador de producción conserva `httpx` para OpenAI.
+- La prueba con proveedor de voz real permanece fuera de la automatización para
+  evitar coste y exposición, pero su audio bidireccional ya fue confirmado
+  manualmente por la persona usuaria.

@@ -112,8 +112,10 @@ El 2026-07-31 se verificaron una clave local sin exponerla, el acceso a
 `gpt-realtime-2.1-mini`, la creación de una llamada SDP mediante FastAPI y la
 apertura del canal WebRTC en estado `connected/open`. Una prueba automatizada
 posterior envió una frase sintética como audio WebRTC y recibió la transcripción
-de salida de la respuesta. La comprobación audible con el micrófono real sigue
-siendo manual porque requiere la voz y los altavoces de la persona usuaria.
+de salida de la respuesta. Posteriormente, la persona usuaria confirmó en una
+sesión manual que el micrófono y el audio de respuesta funcionaban de extremo a
+extremo. Esta comprobación no se automatiza porque utiliza voz, altavoces y coste
+real del proveedor.
 
 El 2026-07-31 se reforzó el reconocimiento del alumno con inglés explícito,
 contexto por escenario, reducción de ruido de campo lejano, VAD menos sensible

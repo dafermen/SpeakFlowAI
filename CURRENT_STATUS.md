@@ -24,7 +24,12 @@ La puerta final de Fase 8 está aprobada.
 
 ## Tarea activa
 
-**Ninguna. M1-T16 quedó completada.**
+**Ninguna. M1-T17 quedó completada.**
+
+`httpx2` forma parte del entorno de desarrollo requerido por Starlette,
+mientras `httpx` permanece en producción para el adaptador de OpenAI. La
+documentación ya distingue las pruebas automatizadas de la validación manual de
+voz y no conserva advertencias resueltas de Mermaid o `TestClient`.
 
 La documentación carga Mermaid únicamente al abrir una página con diagramas. El
 componente local muestra estados comprensibles, conserva tema claro/oscuro y
@@ -80,6 +85,16 @@ audio-in/audio-out permanece como validación manual. La clave debe seguir
 únicamente en FastAPI y nunca compartirse en el chat ni escribirse en frontend.
 
 ## Registro de validación
+
+Mantenimiento M1-T17 del 2026-10-01:
+
+- Starlette 1.3.1 usa `httpx2` 2.13.1 para `TestClient` sin advertencias de
+  deprecación; `httpx` 0.28.1 permanece aislado en el adaptador de OpenAI.
+- La evidencia de voz reconoce la validación manual de audio bidireccional ya
+  realizada y conserva fuera de automatización únicamente la prueba con coste.
+- El informe de calidad registra la carga diferida y el presupuesto de Mermaid.
+- Backend: 23 pruebas aprobadas; Ruff, formato, mypy estricto y `pip check`
+  aprobados.
 
 Mantenimiento M1-T16 del 2026-09-09:
 
@@ -298,7 +313,8 @@ Validación parcial de Fase 3 del 2026-07-31:
 - Pruebas backend acumuladas: 7 aprobadas.
 - Builds React y VitePress: aprobados.
 - Proveedor real: autenticación, modelo, SDP y data channel aprobados el 2026-07-31.
-- Audio-in/audio-out audible: pendiente de comprobación manual con micrófono.
+- Audio-in/audio-out audible: pendiente en este corte histórico; resuelto
+  posteriormente mediante la validación manual de la persona usuaria.
 
 Puerta de Fase 4 del 2026-07-31:
 
