@@ -4,6 +4,8 @@ import { h } from "vue";
 
 import MermaidDiagram from "./MermaidDiagram.vue";
 import "./custom.css";
+import "./innovalogic.css";
+import { useDocumentationImages } from "./image-zoom";
 
 /** Crea el enlace que sale de la documentación y vuelve a la aplicación. */
 function createAppHomeLink(location: "desktop" | "mobile") {
@@ -27,6 +29,9 @@ function createAppHomeLink(location: "desktop" | "mobile") {
 /** Extiende VitePress con una salida visible hacia la aplicación web. */
 export default {
   extends: DefaultTheme,
+  setup() {
+    useDocumentationImages("es");
+  },
   enhanceApp({ app }) {
     app.component("MermaidDiagram", MermaidDiagram);
   },

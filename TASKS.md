@@ -149,3 +149,9 @@ Una sola tarea puede estar `IN_PROGRESS`. La siguiente se desbloquea cuando la a
 |    16 | M1-T16 | Cargar diagramas bajo demanda y mejorar su estado accesible              | DONE   |
 |    17 | M1-T17 | Actualizar dependencias de pruebas y reconciliar evidencia técnica       | DONE   |
 |    18 | M1-T18 | Auditar seguridad, añadir capturas y publicar el repositorio en GitHub   | DONE   |
+
+## Navegación documental InnovaLogic — 2026-10-03
+
+| ID | Actividad | Estado |
+| --- | --- | --- |
+| M1-T19 | Identidad común, recorridos de lectura y ampliación accesible de imágenes | DONE |
