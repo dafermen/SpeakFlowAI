@@ -51,3 +51,12 @@ guarda audio.
 
 Consulta [Feedback y retención](FEEDBACK_AND_RETENTION.md) para conocer los datos
 exactos que se almacenan.
+
+
+## Recorrido visual
+
+Capturas de la aplicación ya incluidas en el repositorio. Se pueden ampliar con clic o teclado y cerrar con Escape.
+
+![Inicio de SpeakFlowAI en escritorio](assets/screenshots/home-desktop.png)
+
+![Catálogo de práctica](assets/screenshots/practice-catalog.png)

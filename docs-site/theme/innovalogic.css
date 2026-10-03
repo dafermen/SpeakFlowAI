@@ -1,0 +1,121 @@
+/* InnovaLogic documentation v1. Change brand tokens here; preserve app styling. */
+:root {
+  --docs-accent: #2563eb;
+  --docs-accent-hover: #1d4ed8;
+  --docs-highlight: #0ea5e9;
+  --vp-c-brand-1: var(--docs-accent);
+  --vp-c-brand-2: var(--docs-accent-hover);
+  --vp-c-brand-3: var(--docs-accent);
+  --vp-c-brand-soft: #eaf1ff;
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-alt: #f8fafc;
+  --vp-c-bg-soft: #eef2f7;
+  --vp-c-bg-elv: #ffffff;
+  --vp-c-text-1: #172033;
+  --vp-c-text-2: #526174;
+  --vp-c-divider: #dbe3ee;
+  --vp-c-gutter: #dbe3ee;
+  --vp-button-brand-bg: var(--docs-accent);
+  --vp-button-brand-hover-bg: var(--docs-accent-hover);
+  --vp-button-brand-active-bg: #1e40af;
+  --vp-button-brand-text: #ffffff;
+  --vp-home-hero-name-color: var(--vp-c-brand-1);
+  --vp-home-hero-image-background-image: radial-gradient(
+    circle,
+    #bae6fd,
+    transparent 66%
+  );
+  --vp-font-family-base:
+    Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.dark {
+  --docs-accent: #93b8ff;
+  --docs-accent-hover: #bed4ff;
+  --vp-c-brand-3: #2563eb;
+  --vp-c-brand-soft: #1c2e50;
+  --vp-c-bg: #101827;
+  --vp-c-bg-alt: #0b1220;
+  --vp-c-bg-soft: #1b293c;
+  --vp-c-bg-elv: #1b293c;
+  --vp-c-text-1: #edf3fc;
+  --vp-c-text-2: #bcc9db;
+  --vp-c-divider: #34445b;
+  --vp-c-gutter: #34445b;
+  --vp-button-brand-bg: #2563eb;
+  --vp-button-brand-hover-bg: #1d4ed8;
+  --vp-button-brand-active-bg: #1e40af;
+  --vp-button-brand-text: #ffffff;
+}
+.VPNavBar {
+  border-top: 3px solid var(--docs-accent);
+}
+.VPHomeHero .name {
+  background-image: linear-gradient(
+    120deg,
+    var(--vp-c-brand-1),
+    var(--docs-highlight)
+  );
+}
+.VPDoc .content-container {
+  max-width: 76ch;
+}
+.vp-doc {
+  font-size: 17px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.vp-doc :is(h1, h2, h3, h4) {
+  scroll-margin-top: 8rem;
+}
+.vp-doc img {
+  max-width: 100%;
+  height: auto;
+}
+.vp-doc img[role="button"] {
+  cursor: zoom-in;
+}
+:is(a, button, summary, input, [tabindex]):focus-visible {
+  outline: 3px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
+}
+.app-home-link,
+.followread-application-link {
+  min-height: 44px;
+}
+.docs-image-dialog {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 14px;
+  padding: 16px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  max-width: 96vw;
+  max-height: 94vh;
+}
+.docs-image-dialog::backdrop {
+  background: rgb(0 0 0 / 75%);
+}
+.docs-image-dialog img {
+  display: block;
+  max-width: 90vw;
+  max-height: 78vh;
+  object-fit: contain;
+}
+.docs-image-dialog button {
+  display: block;
+  margin: 0 0 12px auto;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  font: inherit;
+  cursor: pointer;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

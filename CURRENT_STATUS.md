@@ -1,5 +1,13 @@
 # Estado actual
 
+## Documentation web navigation v1 — local candidate, 2026-10-03
+
+InnovaLogic documentation theme, reading paths and reading controls are implemented. Documentation typecheck, lint and build; browser at 1440 and 390 px. See [navigation maintenance and evidence](docs/WEB_NAVIGATION.md). GitHub and server delivery of this revision are pending; earlier deployment status below remains historical evidence.
+
+## Documentation navigation v1 — 2026-10-03
+
+Completed locally: InnovaLogic theme tokens, three reading paths and keyboard-accessible image enlargement. Existing VitePress search, sidebar, table of contents, page navigation and public routes are preserved. Local browser validation passes at 1440 and 390 px; no server release is claimed.
+
 ## Fase activa
 
 **MVP 1.0 completado**

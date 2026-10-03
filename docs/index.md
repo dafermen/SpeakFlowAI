@@ -16,12 +16,15 @@ hero:
       link: /ARCHITECTURE
 
 features:
-  - title: Experiencia serena
-    details: UX mobile-first para conversar con estados de voz inequívocos.
-  - title: Datos con límites
-    details: SQLite, LocalStorage y JSON tienen responsabilidades explícitas.
-  - title: Evolución secuencial
-    details: Cada fase cumple su puerta de calidad antes de desbloquear la siguiente.
+  - title: Conocer el producto
+    details: Descubre el propósito, las funciones y los límites del compañero de voz.
+    link: /PRODUCT
+  - title: Aprender a usarlo
+    details: Prepara tu perfil y sigue la guía de práctica y conversación.
+    link: /USER_GUIDE
+  - title: Explorar el desarrollo
+    details: Prepara el entorno y recorre la arquitectura y las pruebas.
+    link: /development/GETTING_STARTED
 ---
 
 ## Estado
